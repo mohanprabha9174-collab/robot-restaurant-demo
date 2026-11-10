@@ -267,7 +267,19 @@ h1, h2, h3 { font-family: var(--display); line-height: 1.05; margin: 0; text-wra
 .block .ico { width: 24px; height: 24px; }
 .block .txt { min-width: 0; }
 .palette .block > .ico { display: none; }
-.palette .block { font-size: 15.5px; }
+.palette .block { font-size: 15.5px; gap: 4px; padding-block: 5px; }
+.palette .block .kw { display: none; }
+.palette .block .txt { flex: 1; overflow-wrap: anywhere; }
+.block-grip {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px;
+  margin-inline-end: -4px; border-radius: 8px; cursor: grab; touch-action: none;
+  background: rgb(255 255 255 / .2);
+}
+.block-grip::before {
+  content: ""; width: 12px; height: 18px;
+  background: radial-gradient(circle, currentColor 1.4px, transparent 1.7px) 0 0 / 6px 6px;
+}
+.ghost .block-grip { display: none; }
 .block .req { display: flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 700; margin-top: 2px; }
 .block .req .ico { width: 14px; height: 14px; }
 /* IF blocks: puzzle tab on the right */
@@ -537,6 +549,9 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   .code-grid, .code-grid.hb-open { grid-template-columns: minmax(0, 1fr); }
   .palette { position: static; max-height: none; overflow: visible; }
 }
+@media (min-width: 721px) and (max-width: 860px) {
+  .palette .blocks { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 640px) {
   body { font-size: 17px; }
   .brand > span { display: none; }
@@ -561,12 +576,14 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 }
 @media (max-width: 450px) {
   .invest-list { grid-template-columns: minmax(0, 1fr); }
+  .palette { padding: 10px; }
+  .palette .block { font-size: 14px; padding-inline-start: 7px; }
+  .palette .b-then { padding-inline-start: 13px; padding-inline-end: 13px; }
   .cust-count i { width: 18px; }
   .result .delta { min-width: 40px; font-size: 30px; }
 }
 @media (max-height: 520px) and (orientation: landscape) {
-  .bottombar, .palette { position: static; }
-  .palette { max-height: none; }
+  .bottombar { position: static; }
 }
 @media (pointer: coarse) {
   .block { cursor: pointer; touch-action: pan-y; }
@@ -1181,7 +1198,8 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       : (opts.attrs || '');
     return '<' + tag + ' class="block b-' + kind + (locked ? ' locked' : '') + (armed ? ' armed' : '') + '"' + attrs + '>' +
       '<span class="kw">' + (isIf ? 'IF' : 'THEN') + '</span>' + I(id) +
-      '<span class="txt">' + esc(d.label) + req + '</span></' + tag + '>';
+      '<span class="txt">' + esc(d.label) + req + '</span>' +
+      (opts.palette ? '<span class="block-grip" aria-hidden="true"></span>' : '') + '</' + tag + '>';
   }
   function mini(kind, id) {
     var d = kind === 'if' ? RR.CONDITION[id] : RR.ACTION[id];
@@ -1587,7 +1605,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 
     return topbar() + '<main class="screen">' +
       '<div class="screen-head"><div><h1 tabindex="-1" data-focus>Train your robot</h1>' +
-      '<p>Tap a space on a rule to pick a block, or tap a block and then its space. Up to four rules.</p></div></div>' +
+      '<p>Drag a block by its dotted grip onto a matching IF or THEN space. You can also tap a block and then its space.</p></div></div>' +
       '<div class="code-grid' + (S.handbook ? ' hb-open' : '') + '">' + palette + main + (S.handbook ? handbook() : '') + '</div>' +
       '<div class="bottombar"><button class="btn btn-quiet btn-small" data-act="go-budget" data-k="back-shop" aria-label="Back to shop">' + I('left') + '<span class="bl">Back to shop</span></button>' +
       '<button class="btn btn-small hb-btn" data-act="hb" data-k="hb-tab" aria-expanded="' + S.handbook + '" aria-label="' + (S.handbook ? 'Close handbook' : 'Customer Handbook') + '">' + I('book') + '<span class="bl">' + (S.handbook ? 'Close handbook' : 'Customer Handbook') + '</span><span class="bs">Handbook</span></button>' +
@@ -1996,18 +2014,50 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   });
 
   /* ---------------- drag and drop (pointer) ---------------- */
-  var drag = null, dragJustEnded = false;
+  var drag = null, dragJustEnded = false, dragScrollFrame = null;
+  function dragZoneAt(x, y) {
+    var under = document.elementFromPoint(x, y);
+    return under && under.closest('.zone');
+  }
+  function highlightDragZone() {
+    var zone = dragZoneAt(drag.clientX, drag.clientY);
+    if (zone && zone.getAttribute('data-kind') !== drag.kind) zone = null;
+    if (drag.over === zone) return;
+    if (drag.over) drag.over.classList.remove('over');
+    if (zone) zone.classList.add('over');
+    drag.over = zone;
+  }
+  function scrollDragPage() {
+    dragScrollFrame = null;
+    if (!drag || !drag.ghost) return;
+    var viewportHeight = window.innerHeight;
+    var edge = Math.min(110, viewportHeight / 4);
+    var y = drag.clientY;
+    var speed = y < edge ? -Math.ceil((edge - y) / 5) :
+      y > viewportHeight - edge ? Math.ceil((y - viewportHeight + edge) / 5) : 0;
+    if (!speed) return;
+    var before = window.scrollY;
+    window.scrollBy(0, speed);
+    if (window.scrollY === before) return;
+    highlightDragZone();
+    dragScrollFrame = window.requestAnimationFrame(scrollDragPage);
+  }
   app.addEventListener('pointerdown', function (ev) {
     var el = ev.target.closest('.palette [data-act="arm"]');
-    if (!el || ev.button > 0) return;
-    drag = { el: el, kind: el.getAttribute('data-kind'), id: el.getAttribute('data-id'), x: ev.clientX, y: ev.clientY, ghost: null, over: null, pid: ev.pointerId };
+    if (!el || ev.button > 0 || ev.isPrimary === false || drag) return;
+    var grip = ev.target.closest('.block-grip');
+    drag = {
+      el: el, kind: el.getAttribute('data-kind'), id: el.getAttribute('data-id'),
+      x: ev.clientX, y: ev.clientY, grip: !!grip, ghost: null, over: null, pid: ev.pointerId
+    };
   });
   window.addEventListener('pointermove', function (ev) {
     if (!drag || ev.pointerId !== drag.pid) return;
     if (!drag.ghost) {
       var horizontal = Math.abs(ev.clientX - drag.x);
       var vertical = Math.abs(ev.clientY - drag.y);
-      if (horizontal + vertical < 10 || (ev.pointerType === 'touch' && vertical >= horizontal)) return;
+      if (horizontal + vertical < (drag.grip ? 4 : 10)) return;
+      if (!drag.grip && ev.pointerType === 'touch' && vertical >= horizontal) return;
       drag.ghost = drag.el.cloneNode(true);
       drag.ghost.classList.add('ghost'); drag.ghost.classList.remove('armed');
       document.body.appendChild(drag.ghost);
@@ -2015,22 +2065,25 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       app.querySelectorAll('.zone[data-kind="' + drag.kind + '"]').forEach(function (z) { z.classList.add('target'); });
     }
     ev.preventDefault();
-    drag.ghost.style.left = ev.clientX + 'px';
-    drag.ghost.style.top = ev.clientY + 'px';
-    var under = document.elementFromPoint(ev.clientX, ev.clientY);
-    var z = under && under.closest('.zone');
-    if (drag.over && drag.over !== z) drag.over.classList.remove('over');
-    if (z && z.getAttribute('data-kind') === drag.kind) { z.classList.add('over'); drag.over = z; } else drag.over = null;
+    drag.clientX = ev.clientX;
+    drag.clientY = ev.clientY;
+    drag.ghost.style.left = drag.clientX + 'px';
+    drag.ghost.style.top = drag.clientY + 'px';
+    highlightDragZone();
+    if (dragScrollFrame === null) dragScrollFrame = window.requestAnimationFrame(scrollDragPage);
   }, { passive: false });
   function endDrag(ev) {
     if (!drag || (ev && ev.pointerId !== drag.pid)) return;
     var d = drag; drag = null;
     if (!d.ghost) return;
+    if (dragScrollFrame !== null) {
+      window.cancelAnimationFrame(dragScrollFrame);
+      dragScrollFrame = null;
+    }
     d.ghost.remove();
     document.body.classList.remove('dragging');
     dragJustEnded = true; setTimeout(function () { dragJustEnded = false; }, 60);
-    var under = ev && document.elementFromPoint(ev.clientX, ev.clientY);
-    var z = under && under.closest('.zone');
+    var z = ev && dragZoneAt(ev.clientX, ev.clientY);
     if (z && ev.type === 'pointerup') {
       if (z.getAttribute('data-kind') === d.kind) place(+z.getAttribute('data-zone'), d.kind, d.id);
       else announce('That block goes in ' + (d.kind === 'if' ? 'an IF' : 'a THEN') + ' space.');
@@ -2039,6 +2092,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   }
   window.addEventListener('pointerup', endDrag);
   window.addEventListener('pointercancel', endDrag);
+  window.addEventListener('blur', function () { endDrag(); });
 
   /* test hook for automated checks */
   window.__rr = { state: function () { return S; }, render: render };
