@@ -745,6 +745,60 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
 .daily-decor-tag { display: inline-block; color: #17665E; background: #E3F3EC; padding: 1px 5px; border-radius: 5px; font-size: 12px; font-weight: 800; }
 .invest-choice.vip { --policy-tint: #F3DDEA; --policy-ink: #6B2952; }
 .invest-choice.care { --policy-tint: #DFF3EF; --policy-ink: #175C55; }
+
+/* Tablet and phone controls */
+.palette-switch { display: none; }
+.palette-group { display: grid; min-width: 0; gap: 8px; }
+.palette-group .hint { margin: 0; }
+.btn, .buy, .zone, .icon-btn, .tb-btn, .palette-switch button { touch-action: manipulation; }
+.zone.filled .block { min-width: 0; }
+.zone.filled .txt { overflow-wrap: anywhere; }
+.nickname input { font-size: max(16px, 1em); }
+.modal { max-height: calc(100dvh - 32px); overscroll-behavior: contain; }
+@media (min-width: 721px) and (max-width: 1180px) {
+  .code-grid, .code-grid.hb-open { grid-template-columns: minmax(225px, 31%) minmax(0, 1fr); gap: 12px; }
+  .code-grid > .rail { min-width: 0; }
+  .palette { position: sticky; top: 8px; max-height: calc(100dvh - 102px); overflow: auto; padding: 10px; }
+  .palette-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .palette-switch button { min-height: 48px; padding: 5px; border: 2px solid #D6C5EE; border-radius: 10px; background: #F6F0FB; color: #3F2780; font-size: 14px; font-weight: 800; }
+  .palette-switch button[aria-pressed="true"] { background: var(--plum); border-color: var(--plum); color: white; }
+  .palette[data-palette="if"] .palette-then, .palette[data-palette="then"] .palette-if { display: none; }
+  .palette-group h2 { display: none; }
+  .palette .blocks { grid-template-columns: minmax(0, 1fr); }
+  .palette .block { min-height: 51px; }
+  .t-body { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 6px; }
+  .t-arrow { justify-self: auto; transform: none; }
+  .t-arrow .ico { width: 20px; height: 20px; }
+  .zone { min-height: 66px; }
+  .zone.filled .block > .ico { display: none; }
+  .zone.filled .block { gap: 5px; font-size: 14px; }
+  .zone.filled .block .kw { font-size: 11px; padding-inline: 4px; }
+  .sim-grid { grid-template-columns: minmax(0, 3fr) minmax(250px, 2fr); }
+  .sim-grid .panel [data-act="next"] { min-height: 54px; }
+  .delivery-pad { grid-template-columns: repeat(3, minmax(58px, 66px)); }
+  .delivery-arrow { min-height: 58px; }
+}
+@media (max-width: 720px) {
+  .code-grid > .rail { order: -1; }
+  .code-grid > .rail .zone { min-height: 58px; scroll-margin-block: 72px; }
+  .code-grid > .rail .t-body { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .code-grid > .rail .t-arrow { transform: none; }
+  .code-grid > .rail .t-arrow .ico { width: 18px; height: 18px; }
+  .zone.filled .block > .ico { display: none; }
+  .zone.filled .block { font-size: 14px; flex-wrap: wrap; }
+  .delivery-arrow { min-height: 50px; }
+  .challenge-rules .row { position: sticky; bottom: 0; background: var(--paper); padding-block: 5px; }
+}
+@media (pointer: coarse) {
+  .palette .block { touch-action: pan-y; }
+  .palette .block-grip { touch-action: none; }
+  .zone.filled .clear-x { width: 32px; height: 32px; }
+}
+@media (max-width: 360px) {
+  .zone .zk { font-size: 13px !important; }
+  .zone .zl small { font-size: 11px; }
+  .code-grid > .rail .t-body { gap: 4px; }
+}
 </style>
 </head>
 <body>
@@ -1302,7 +1356,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     return {
       screen: 'welcome', selected: [], rules: freshRules(),
       lineup: lineup, day: null, eventIndex: 0, phase: 0,
-      armed: null, handbook: false, modal: null, autoplay: false
+      armed: null, paletteKind: 'if', handbook: false, modal: null, autoplay: false
     };
   }
   var S = freshState();
@@ -2064,11 +2118,14 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
         '<button class="btn btn-quiet btn-small" data-act="disarm" data-k="disarm">Cancel</button></div>';
     }
 
-    var palette = '<section class="palette' + (S.hard ? ' challenge-palette' : '') + '" aria-label="Blocks">' +
-      '<h2>' + I('cold_food') + 'IF blocks</h2><p class="hint">What a customer might say.</p>' +
-      '<div class="blocks">' + RR.CONDITIONS.map(function (c) { return blockHTML('if', c.id, { palette: true }); }).join('') + '</div>' +
-      '<h2>' + I('robot') + 'THEN blocks</h2><p class="hint">What your robot will do.</p>' +
-      '<div class="blocks">' + availableActions().map(function (a) { return blockHTML('then', a.id, { palette: true }); }).join('') + '</div>' +
+    var palette = '<section class="palette' + (S.hard ? ' challenge-palette' : '') + '" aria-label="Blocks" data-palette="' + S.paletteKind + '">' +
+      '<div class="palette-switch" role="group" aria-label="Choose which blocks to show">' +
+      '<button type="button" data-act="palette-kind" data-kind="if" data-k="palette-if" aria-pressed="' + (S.paletteKind === 'if') + '">IF blocks</button>' +
+      '<button type="button" data-act="palette-kind" data-kind="then" data-k="palette-then" aria-pressed="' + (S.paletteKind === 'then') + '">THEN blocks</button></div>' +
+      '<div class="palette-group palette-if"><h2>' + I('cold_food') + 'IF blocks</h2><p class="hint">What a customer might say.</p>' +
+      '<div class="blocks">' + RR.CONDITIONS.map(function (c) { return blockHTML('if', c.id, { palette: true }); }).join('') + '</div></div>' +
+      '<div class="palette-group palette-then"><h2>' + I('robot') + 'THEN blocks</h2><p class="hint">What your robot will do.</p>' +
+      '<div class="blocks">' + availableActions().map(function (a) { return blockHTML('then', a.id, { palette: true }); }).join('') + '</div></div>' +
       '</section>';
 
     var main = '<section class="rail" aria-label="Your robot’s rules">' +
@@ -2081,7 +2138,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
 
     return topbar() + '<main class="screen">' +
       '<div class="screen-head"><div><h1 tabindex="-1" data-focus>Train your robot</h1>' +
-      '<p>Drag a block by its dotted grip onto a matching IF or THEN space. You can also tap a block and then its space.</p></div></div>' +
+      '<p>Tap an IF or THEN space to pick a block, or drag a block by its dotted grip.</p></div></div>' +
       '<div class="code-grid' + (S.handbook ? ' hb-open' : '') + '">' + palette + main + (S.handbook ? handbook() : '') + '</div>' +
       '<div class="bottombar"><button class="btn btn-quiet btn-small" data-act="go-budget" data-k="back-shop" aria-label="Back to shop">' + I('left') + '<span class="bl">Back to shop</span></button>' +
       '<button class="btn btn-small hb-btn" data-act="hb" data-k="hb-tab" aria-expanded="' + S.handbook + '" aria-label="' + (S.handbook ? 'Close handbook' : 'Customer Handbook') + '">' + I('book') + '<span class="bl">' + (S.handbook ? 'Close handbook' : 'Customer Handbook') + '</span><span class="bs">Handbook</span></button>' +
@@ -2279,7 +2336,13 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
   }
   function place(i, kind, id) {
     var r = S.rules[i];
-    if (kind === 'if') r.condition = id; else r.action = id;
+    if (kind === 'if') {
+      r.condition = id;
+      S.paletteKind = r.action ? 'if' : 'then';
+    } else {
+      r.action = id;
+      S.paletteKind = 'if';
+    }
     S.armed = null;
     beep('place');
     var d = kind === 'if' ? RR.CONDITION[id] : RR.ACTION[id];
@@ -2439,13 +2502,22 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
         announce('You need ' + need + ' more coin' + (need > 1 ? 's' : '') + ' for ' + RR.UPGRADE[id].name + '. Remove something to free up coins.'); return;
       case 'go-code': return go('code');
       case 'go-budget': return go('budget');
+      case 'palette-kind':
+        S.paletteKind = kind;
+        S.armed = null;
+        return render();
       case 'arm':
         if (S.armed && S.armed.kind === kind && S.armed.id === id) { S.armed = null; announce('Block put back.'); }
         else {
           S.armed = { kind: kind, id: id }; beep('tap');
           announce('Picked ' + (kind === 'if' ? RR.CONDITION[id].label : RR.ACTION[id].label) + '. Now choose ' + (kind === 'if' ? 'an IF' : 'a THEN') + ' space on a rule.');
         }
-        return render();
+        render();
+        if (S.armed && ev.detail && window.matchMedia('(max-width: 720px)').matches) {
+          var target = app.querySelector('.zone.target:not(.filled)') || app.querySelector('.zone.target');
+          if (target) target.scrollIntoView({ block: 'center', behavior: REDUCED ? 'auto' : 'smooth' });
+        }
+        return;
       case 'disarm': S.armed = null; return render();
       case 'zone':
         if (S.armed) {
@@ -2454,7 +2526,14 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
           return;
         }
         S.modal = { type: 'picker', i: i, kind: kind, returnK: el.getAttribute('data-k') }; return render();
-      case 'pick': place(S.modal.i, S.modal.kind, id); S.modal = null; return render();
+      case 'pick':
+        var pickedSlot = S.modal.returnK;
+        place(S.modal.i, S.modal.kind, id);
+        S.modal = null;
+        render();
+        var slot = app.querySelector('[data-k="' + pickedSlot + '"]');
+        if (slot) slot.focus({ preventScroll: true });
+        return;
       case 'pick-clear':
         if (S.modal.kind === 'if') S.rules[S.modal.i].condition = null; else S.rules[S.modal.i].action = null;
         announce('Block removed.'); S.modal = null; return render();
