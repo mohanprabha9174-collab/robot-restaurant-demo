@@ -691,6 +691,19 @@ body:not(.colab-visible) #colab { display:none; }
  @page { size:A4; margin:8mm; }
 }
 
+
+.cc-nav > div { display:flex; justify-content:flex-end; flex-wrap:wrap; gap:6px; margin-left:auto; }
+.colab .cc-deep-dive { background:#5638A4; border-color:#5638A4; color:white; }
+#deep-dive-qr { width:min(450px,calc(100% - 28px)); max-height:calc(100dvh - 24px); padding:24px; border:2px solid #6D509B; border-radius:22px; background:#FFFBF1; color:#291F38; box-shadow:0 20px 80px #20142F55; text-align:center; overflow:auto; }
+#deep-dive-qr::backdrop { background:#241834AA; }
+#deep-dive-qr h2 { font:800 32px/1.1 var(--display); margin:0 0 12px; padding:0 24px; }
+#deep-dive-qr p { margin:0 auto 16px; max-width:310px; font-size:17px; }
+#deep-dive-qr img { width:min(270px,100%); height:auto; display:block; margin:0 auto 16px; }
+#deep-dive-qr form { margin:0; }
+#deep-dive-qr .qr-close { position:absolute; right:9px; top:9px; width:44px; height:44px; border:0; border-radius:12px; background:#EDE3F6; color:#372254; cursor:pointer; font-size:27px; }
+#deep-dive-qr a { display:inline-block; padding:11px 16px; color:white; background:#5638A4; border-radius:13px; font-weight:800; text-decoration:none; }
+#deep-dive-qr :focus-visible { outline:3px solid #7754BE; outline-offset:3px; }
+
 </style>
 </head>
 <body>
@@ -2255,7 +2268,7 @@ body:not(.colab-visible) #colab { display:none; }
   }
   function coinsLeft() { return 5 - state.program.length - (state.bridge?3:0); }
   function top(title) {
-    return '<nav class="cc-nav" aria-label="Activity navigation"><span class="cc-brand">'+ART.icon('robot')+'Robot Restaurant</span><div><button data-cc="home">Activities</button> <button data-cc="guide">Table guide</button></div></nav>' + (title?'<h1 tabindex="-1" data-cc-focus>'+title+'</h1>':'');
+    return '<nav class="cc-nav" aria-label="Activity navigation"><span class="cc-brand">'+ART.icon('robot')+'Robot Restaurant</span><div><button data-cc="home">Activities</button> <button data-cc="guide">Table guide</button> <button class="cc-deep-dive" data-deep-dive>Deep Dive</button></div></nav>' + (title?'<h1 tabindex="-1" data-cc-focus>'+title+'</h1>':'');
   }
   function homeHTML() {
     return top('')+'<main><section class="cc-home"><div><p class="cc-age">Ages 3–4 with a grown-up</p><h1 tabindex="-1" data-cc-focus>Help Pip make<br>a delivery.</h1><p class="cc-lesson">Pip follows your arrows in order.</p><button class="cc-primary" data-cc="delivery">Let’s play '+ART.icon('play')+'</button><p class="cc-help-copy">Start on the table or try the arrows here.</p></div><div class="cc-intro-art" aria-label="Robot Delivery board preview">'+board(false,false,{x:0,y:0})+'</div></section>'+ 
@@ -2386,6 +2399,27 @@ body:not(.colab-visible) #colab { display:none; }
   buildPrint();document.body.classList.add('colab-visible');render();
 })();
 
+</script>
+
+<dialog id="deep-dive-qr" aria-labelledby="deep-dive-title" aria-describedby="deep-dive-intro">
+<form method="dialog"><button class="qr-close" aria-label="Close Deep Dive" autofocus>×</button></form>
+<h2 id="deep-dive-title">Deep Dive with Pip</h2><p id="deep-dive-intro">Scan with your camera for interactive Python and economics activities.</p>
+<img src="data:image/png;base64,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" alt="QR code for Deep Dive with Pip" width="270" height="270">
+<a href="https://mohanprabha9174-collab.github.io/robot-restaurant-demo/robot-restaurant-deep-dive.html" target="_blank" rel="noopener">Open Deep Dive in a new tab</a>
+</dialog>
+<script>
+(function () {
+  var dialog = document.getElementById('deep-dive-qr');
+  var opener = null;
+  document.addEventListener('click',function (event) {
+    var button = event.target.closest('[data-deep-dive]');
+    if (!button || dialog.open) return;
+    opener = button;
+    dialog.showModal();
+  });
+  dialog.addEventListener('click',function (event) { if (event.target === dialog) dialog.close(); });
+  dialog.addEventListener('close',function () { if (opener && opener.isConnected) opener.focus(); });
+})();
 </script>
 </body>
 </html>
