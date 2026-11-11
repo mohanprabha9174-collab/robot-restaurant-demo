@@ -2235,10 +2235,10 @@ body:not(.colab-visible) #colab { display:none; }
     window.speechSynthesis.speak(utterance);
   }
   function robot() {
-    return '<svg class="scene cc-robot" viewBox="-90 -140 180 220" role="img" aria-label="Pip the robot">' + ART.robot({ mood: 'happy' }) + '</svg>';
+    return '<svg class="scene cc-robot" viewBox="-100 -115 210 285" role="img" aria-label="Pip the robot">' + ART.robot({ mood: 'happy' }) + '</svg>';
   }
   function customer() {
-    return '<svg class="scene cc-target" viewBox="-65 -65 130 130" role="img" aria-label="Customer"><g transform="translate(0,8)">' + ART.person(2,'happy') + '</g></svg>';
+    return '<svg class="scene cc-target" viewBox="-70 -62 140 200" role="img" aria-label="Customer"><g transform="translate(0,8)">' + ART.person(2,'happy') + '</g></svg>';
   }
   function puddle(bridge) {
     return '<svg viewBox="0 0 100 100" role="img" aria-label="' + (bridge ? 'Bridge over a puddle' : 'Puddle') + '"><ellipse cx="50" cy="58" rx="39" ry="23" fill="#73BCD4"/><ellipse cx="49" cy="53" rx="25" ry="10" fill="#B7E5F1"/>' + (bridge ? '<path d="M13 64Q50 26 87 64" fill="none" stroke="#805332" stroke-width="22"/><path d="M15 61Q50 23 85 61" fill="none" stroke="#DDA667" stroke-width="15" stroke-dasharray="8 3"/>' : '') + '</svg>';
