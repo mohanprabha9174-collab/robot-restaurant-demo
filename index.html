@@ -725,6 +725,13 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
 }
 @keyframes customer-step { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
 @media (prefers-reduced-motion: reduce) { .customer-walk-in, .customer-stride { animation: none; } }
+
+.saved-rules-note { margin: 0; padding: 10px 13px; border: 1px solid #ADCEC3; border-radius: 10px; background: #E3F3EC; color: #174F46; }
+.reuse-rules-bar { flex-wrap: wrap; }
+@media (max-width: 480px) {
+  .reuse-rules-bar .coins { margin-right: auto; }
+  .reuse-rules-bar .btn { font-size: 15px; min-height: 44px; padding-inline: 10px; }
+}
 </style>
 </head>
 <body>
@@ -1471,7 +1478,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     }).join('');
     return '<div class="modal challenge-rules" role="dialog" aria-modal="true" aria-labelledby="m-h">' +
       '<h2 id="m-h" tabindex="-1">Chef’s Challenge rules</h2><div class="challenge-rule-grid">' +
-      '<section><h3>Survive 3 days</h3><p>Start with <b>' + CHALLENGE_BUDGET + ' coins</b> and <b>5 popularity</b>. Each day has four guests. Rework your rules and buy upgrades between days. Your restaurant closes only if <b>popularity reaches zero</b>. If you run out of coins, you can keep serving guests and earn them back.</p></section>' +
+      '<section><h3>Survive 3 days</h3><p>Start with <b>' + CHALLENGE_BUDGET + ' coins</b> and <b>5 popularity</b>. Each day has four guests. Your rules are saved between days. You can edit them and buy upgrades before the next shift. Your restaurant closes only if <b>popularity reaches zero</b>. If you run out of coins, you can keep serving guests and earn them back.</p></section>' +
       '<section><h3>Earn and invest</h3><p>Earn coins and <b>+0.5 popularity per request</b> when you fully help a guest. Comfy Booths and Fun Decorations each add <b>+0.5 per fully helped guest</b>. Miss a request and lose coins and popularity.</p>' +
       '<p>Tap water is free to serve and earns no coins. The drink station earns the regular payout and popularity.</p>' +
       '<p>Pick one policy or save your coins. <b>Growth Fund</b> adds 30% income for 5 coins. <b>Steady Saver</b> adds 15% for 3. <b>Safety Net</b> reduces losses for 4.</p></section>' +
@@ -1867,6 +1874,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
 
   function budget() {
     var hard = S.hard;
+    var reuseRules = hard && hard.day > 1;
     var left = hard ? hard.coins : RR.coinsLeft(S.selected);
     var items = RR.UPGRADES.map(function (u) {
       var owned = S.selected.indexOf(u.id) !== -1;
@@ -1892,6 +1900,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
       '<div class="screen-head"><div><h1 tabindex="-1" data-focus>Build your restaurant</h1>' +
       '<p>' + (hard ? 'Keep some coins for service. The shop won’t let you spend your last coins. Your upgrades and coins carry forward.' : 'You have 10 coins. You can’t buy everything, so pick what matters most. Coins you don’t spend are saved.') + '</p></div>' +
       (hard ? challengeStatus(left, hard.popularity) : '') + '</div>' +
+      (reuseRules ? '<p class="saved-rules-note"><b>Pip’s code is saved.</b> Start the next shift with your saved rules, or edit them first.</p>' : '') +
       '<div class="budget-grid"><section aria-label="Your restaurant">' +
       '<div class="purse"><div><div class="lbl">Coins left</div><div class="big" aria-live="polite">' + left + (hard ? '' : ' <span class="sr">of 10 coins left</span>') + '</div></div>' + (hard ? '' : coinDots(left)) + '</div>' +
       '<div class="scene-box">' + ART.scene({ selected: S.selected, fresh: lastBought, robot: { mood: 'happy' }, label: 'Your restaurant. Upgrades bought: ' + bought }) + '</div>' +
@@ -1901,8 +1910,10 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
       '<p>Some upgrades unlock robot actions. Choose what matters most!</p>' +
       (hard ? '<p class="challenge-forecast"><b>Today’s forecast</b> ' + CHALLENGE_FORECASTS[hard.day - 1] + '</p>' : '') +
       '<ul class="shop-list">' + items + '</ul></section></div>' + (hard ? investments() : '') +
-      '<div class="bottombar"><span class="coins">' + I('coin') + left + ' coin' + (left === 1 ? '' : 's') + ' left</span>' +
-      '<button class="btn btn-go" data-act="go-code" data-k="go-code">Train my robot' + I('right') + '</button></div>' +
+      '<div class="bottombar' + (reuseRules ? ' reuse-rules-bar' : '') + '"><span class="coins">' + I('coin') + left + ' coin' + (left === 1 ? '' : 's') + ' left</span>' +
+      (reuseRules ? '<button class="btn btn-quiet btn-small" data-act="go-code" data-k="go-code">Edit Pip’s code</button>' +
+        '<button class="btn btn-go" data-act="reuse-code" data-k="reuse-code">Start Day ' + hard.day + I('right') + '</button>' :
+        '<button class="btn btn-go" data-act="go-code" data-k="go-code">Train my robot' + I('right') + '</button>') + '</div>' +
       '</main>';
   }
 
@@ -2352,6 +2363,9 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
       case 'hb':
         S.handbook = !S.handbook; render();
         var h = app.querySelector(S.handbook ? '#hb-h' : '[data-k="hb-tab"]'); if (h) h.focus();
+        return;
+      case 'reuse-code':
+        if (S.hard && S.hard.day > 1 && S.screen === 'budget') return startDay();
         return;
       case 'start-day': return confirmStart();
       case 'next': return next();
