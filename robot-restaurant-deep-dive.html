@@ -716,10 +716,25 @@ body.dive-page { margin:0; background:#F7F0E3; color:#251A34; }
  .dive-practice { padding:16px; }
 }
 .dive-check input[type=number] { width:88px; min-height:44px; padding:6px 10px; border:2px solid #CCBFD1; border-radius:10px; color:#302040; background:#fff; }
+.mission-scene { display:flex; align-items:center; gap:10px; min-height:100px; background:#F0E6F5; border-radius:14px; padding:10px 14px; margin:16px 0; }
+.mission-pip,.mission-guest { flex:0 0 52px; height:72px; }
+.mission-pip svg,.mission-guest svg { width:100%; height:100%; }
+.mission-scene .mission-speech { margin:0; font-weight:800; }
+.mission-scene.mission-won { background:#E4F0D8; }
+.mission-won .mission-pip svg { animation:mission-bounce .55s ease-out; }
+@keyframes mission-bounce { 35% { transform:translateY(-9px) rotate(-7deg); } 70% { transform:translateY(-4px) rotate(4deg); } }
+.mission-choices,.mission-actions { display:flex; gap:9px; flex-wrap:wrap; margin:14px 0; }
+.mission-choices button { text-transform:capitalize; }
+.mission-rule { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:16px 0; }
+.mission-rule label { display:grid; gap:6px; min-width:0; }
+.mission-rule select { width:100%; }
+.dive-practice pre[data-code] { min-height:0; }
+@media(max-width:520px){ .mission-rule { grid-template-columns:1fr; } .mission-scene { padding:9px; } }
+@media(prefers-reduced-motion:reduce){ .mission-won .mission-pip svg { animation:none; } }
 </style></head><body class="dive-page"><main class="dive">
 <nav class="dive-nav" aria-label="Page navigation"><span class="dive-brand">Robot Restaurant</span><a href="https://mohanprabha9174-collab.github.io/robot-restaurant-demo/">Back to Robot Restaurant</a></nav>
-<header class="dive-hero"><div><p class="dive-label">DEEP DIVE</p><h1>Learn with Pip</h1><p>Read how Pip follows Python instructions and makes restaurant choices. Then try each idea yourself.</p></div><div class="dive-hero-art" id="dive-hero-pip"></div></header>
-<div class="dive-grid"><nav class="dive-chooser" aria-label="On this page"><h2>On this page</h2><div class="dive-progress"><span id="dive-count" aria-live="polite"></span><progress id="dive-progress" aria-label="Activities complete" max="12" value="0"></progress></div><div class="dive-contents" id="dive-picker"><a href="#variables">Variables<span class="done" data-progress-for="variables" aria-hidden="true"></span></a><a href="#loops">Loops<span class="done" data-progress-for="loops" aria-hidden="true"></span></a><a href="#budget">Budgets<span class="done" data-progress-for="budget" aria-hidden="true"></span></a><a href="#price">Prices and profit<span class="done" data-progress-for="price" aria-hidden="true"></span></a></div></nav>
+<header class="dive-hero"><div><p class="dive-label">DEEP DIVE</p><h1>Learn with Pip</h1><p>Read how Pip follows Python instructions and makes restaurant choices. Then help Pip finish five short missions.</p></div><div class="dive-hero-art" id="dive-hero-pip"></div></header>
+<div class="dive-grid"><nav class="dive-chooser" aria-label="On this page"><h2>On this page</h2><div class="dive-progress"><span id="dive-count" aria-live="polite"></span><progress id="dive-progress" aria-label="Activities complete" max="10" value="0"></progress></div><div class="dive-contents" id="dive-picker"><a href="#variables">Variables<span class="done" data-progress-for="variables" aria-hidden="true"></span></a><a href="#loops">Loops<span class="done" data-progress-for="loops" aria-hidden="true"></span></a><a href="#conditions">IF and THEN<span class="done" data-progress-for="conditions" aria-hidden="true"></span></a><a href="#budget">Budgets<span class="done" data-progress-for="budget" aria-hidden="true"></span></a><a href="#price">Prices and profit<span class="done" data-progress-for="price" aria-hidden="true"></span></a></div></nav>
 <article class="dive-reading" aria-label="Python and economics lessons">
   <section id="variables" class="dive-chapter">
     <p class="dive-topic">Python</p>
@@ -745,6 +760,19 @@ print(snack)    # Shows soup</code></pre>
 print("All guests greeted!")</code></pre>
     </div>
     <div class="dive-practice" data-practice="loops"></div>
+  </section>
+
+  <section id="conditions" class="dive-chapter">
+    <p class="dive-topic">Python</p>
+    <h2>IF and THEN</h2>
+    <div class="dive-copy">
+      <p>An <strong>if statement</strong> lets Pip make a decision. If the guest wants a drink, Pip should bring one. Python checks the condition first. When it is true, Python runs the indented instruction.</p>
+      <p><code>==</code> checks whether two values match. Think of the indented line as the THEN part of a restaurant rule.</p>
+      <pre class="dive-worked"><code>request = "Wants a drink"
+if request == "Wants a drink":
+    print("Bring a drink")</code></pre>
+    </div>
+    <div class="dive-practice" data-practice="conditions"></div>
   </section>
 
   <section id="budget" class="dive-chapter">
@@ -993,8 +1021,8 @@ print("All guests greeted!")</code></pre>
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var STORAGE = 'robot-restaurant-deep-dive-progress-v1';
 
-  var lessonKeys=['variables','loops','budget','price'];
-  var validKeys = new Set(lessonKeys.flatMap(function (key) { return [key,key+'-check-0',key+'-check-1']; }));
+  var lessonKeys=['variables','loops','conditions','budget','price'];
+  var validKeys = new Set(lessonKeys.flatMap(function (key) { return [key+'-mission',key+'-check-0']; }));
   var completed = new Set();
   try {
     var saved = JSON.parse(localStorage.getItem(STORAGE) || '[]');
@@ -1015,7 +1043,7 @@ print("All guests greeted!")</code></pre>
     progressCount.textContent=completed.size+' of '+validKeys.size+' activities complete';
     contents.querySelectorAll('[data-progress-for]').forEach(function (mark) {
       var key=mark.dataset.progressFor;
-      mark.textContent=[key,key+'-check-0',key+'-check-1'].every(function (id) { return completed.has(id); })?'✓':'';
+      mark.textContent=[key+'-mission',key+'-check-0'].every(function (id) { return completed.has(id); })?'✓':'';
     });
   }
   function complete(key) {
@@ -1025,37 +1053,19 @@ print("All guests greeted!")</code></pre>
     celebrate();
   }
   function response(lesson,message) { lesson.querySelector('.dive-response').textContent=message; }
-  function variables(lesson) {
-    lesson.insertAdjacentHTML('beforeend','<h3>Change a snack name</h3>'+ '<p>A variable is a name for a value. Here, <code>snack</code> stores the name of a food. <code>print()</code> shows its value.</p>'+
-      '<div class="dive-row"><label for="variables-snack"><b>Choose a snack</b></label><select id="variables-snack"><option value="pizza">Pizza</option><option value="apple">Apple</option><option value="soup">Soup</option></select></div>'+
-      '<div class="dive-pair"><div><span class="dive-console-label">Python</span><pre class="dive-console" id="variables-code"></pre></div><div><span class="dive-console-label">Output</span><pre class="dive-console output" id="variables-output" aria-live="polite">Run the example to see the output.</pre></div></div>'+
-      '<fieldset class="dive-predict"><legend>What will print(snack) show?</legend><label><input type="radio" name="variables-prediction" value="food"><span id="variables-guess-food"></span></label><label><input type="radio" name="variables-prediction" value="name">snack</label></fieldset>'+
-      '<div class="dive-row"><button class="dive-primary" id="variables-run">Run example</button></div><p class="dive-response" role="status"></p>');
-    var select=lesson.querySelector('select'), code=lesson.querySelector('#variables-code'), output=lesson.querySelector('#variables-output');
-    function update() {
-      code.textContent='snack = "'+select.value+'"\nprint(snack)';
-      lesson.querySelector('#variables-guess-food').textContent=select.value;
-      lesson.querySelectorAll('input[type=radio]').forEach(function (input) { input.checked=false; });
-      output.textContent='Run the example to see the output.';
-      response(lesson, '');
-    }
-    select.addEventListener('change',update);
-    lesson.querySelector('#variables-run').addEventListener('click',function () {
-      var guess=lesson.querySelector('input[name=variables-prediction]:checked');
-      output.textContent=select.value;
-      response(lesson, (guess && guess.value==='food'?'You predicted it. ':'')+'Python reads the value stored in snack, so it prints '+select.value+'. Try choosing a different food.');
-      complete('variables');
-    });
-    update();
-  }
-
   function loops(lesson) {
-    lesson.insertAdjacentHTML('beforeend','<h3>Run a loop with Pip</h3>'+'<p>A <code>for</code> loop repeats the indented line. Choose how many times Pip should say hello.</p>'+
-      '<div class="dive-range"><label for="loops-repeat"><b>Repeat count</b></label><input id="loops-repeat" type="range" min="1" max="5" value="3"><output id="loops-repeat-value" for="loops-repeat"></output></div>'+
+    lesson.insertAdjacentHTML('beforeend','<h3>Greet three guests</h3>'+'<p>A <code>for</code> loop repeats the indented line. Give each of the three waiting guests exactly one hello.</p>'+
+      '<div class="dive-range"><label for="loops-repeat"><b>Repeat count</b></label><input id="loops-repeat" type="range" min="1" max="5" value="2"><output id="loops-repeat-value" for="loops-repeat"></output></div>'+
       '<div class="dive-pair"><div><span class="dive-console-label">Python</span><pre class="dive-console" id="loops-code"></pre></div><div><span class="dive-console-label">Output</span><pre class="dive-console output" id="loops-output" aria-live="polite">Run the loop to see each line.</pre></div></div>'+
-      '<div class="dive-loop-track" id="loops-track" aria-label="Loop steps"></div><button class="dive-primary" id="loops-run">Run loop</button><p class="dive-response" role="status"></p>');
+      '<div class="dive-people loop-guests" aria-label="Three waiting guests"></div><div class="dive-loop-track" id="loops-track" aria-label="Loop steps"></div><button class="dive-primary" id="loops-run">Run loop</button><p class="dive-response" role="status"></p>');
     var count=lesson.querySelector('#loops-repeat'), code=lesson.querySelector('#loops-code'), output=lesson.querySelector('#loops-output'), run=lesson.querySelector('#loops-run'), track=lesson.querySelector('#loops-track');
     function draw(step) {
+      lesson.querySelector('.loop-guests').innerHTML=Array.from({length:3},function (_,i) {
+        var greeted=i<=step;
+        return '<div class="dive-guest '+(greeted?'bought':'')+'">'+guest(i,greeted?'happy':'asking')+
+          '<strong>Guest '+(i+1)+'</strong>'+(greeted?'Greeted':'Waiting')+'</div>';
+      }).join('');
+
       track.innerHTML=Array.from({length:Number(count.value)},function (_,i) {
         return '<div class="dive-loop-cell'+(i===step?' active':'')+'"><span>'+i+'</span>'+(i===step?'<span class="dive-tiny">'+robot(false)+'</span>':'')+'</div>';
       }).join('');
@@ -1076,8 +1086,8 @@ print("All guests greeted!")</code></pre>
       function step() {
         if (current===total) {
           count.disabled=run.disabled=false;
-          response(lesson, 'range('+total+') starts at 0 and stops before '+total+'. Pip printed Hello! '+total+(total===1?' time.':' times.'));
-          complete('loops');
+          missionResult(lesson, 'Pip gave '+total+' greeting'+(total===1?'':'s')+' to three guests. '+(total===3?'Everyone heard one hello.':'Set the repeat count to match the number of guests.'),total===3);
+          if(total===3)complete('loops-mission');
           return;
         }
         draw(current++);
@@ -1091,7 +1101,7 @@ print("All guests greeted!")</code></pre>
   }
 
   function budget(lesson) {
-    lesson.insertAdjacentHTML('beforeend','<h3>Choose what Pip buys</h3>'+'<p>Pip has <b>6 coins</b>. Choose what to buy before three guests arrive.</p>'+
+    lesson.insertAdjacentHTML('beforeend','<h3>Keep the restaurant running</h3>'+'<p>Pip has <b>6 coins</b>. Serve all three guests and finish with at least <b>8 coins</b>.</p>'+
       '<div class="dive-shop"><label><input type="checkbox" id="budget-stand"><span><strong>Drink stand · 3 coins</strong><small>Serve three drinks for 2 coins each.</small></span></label><label><input type="checkbox" id="budget-decor"><span><strong>Decorations · 2 coins</strong><small>Gain 1 popularity per guest served.</small></span></label></div>'+
       '<div class="dive-totals" id="budget-budget-totals" aria-live="polite"></div><div class="dive-people" id="budget-budget-guests" aria-label="Three guests"></div>'+
       '<button class="dive-primary" id="budget-run">Open the restaurant</button><p class="dive-response" role="status"></p>');
@@ -1116,11 +1126,13 @@ print("All guests greeted!")</code></pre>
         draw(++processed);
         if(processed<3) { setTimeout(serve,reduced.matches?0:480);return; }
         stand.disabled=decor.disabled=run.disabled=false;
-        if (stand.checked && decor.checked) response(lesson, 'The stand earned 6 coins. Decorations added 3 popularity. Try just the stand to compare your final coins.');
-        else if (stand.checked) response(lesson, 'The stand cost 3 coins and earned 6. Buying it left Pip with 9 coins. What happens if you add decorations?');
-        else if (decor.checked) response(lesson, 'Decorations cost 2 coins. Their bonus applies to guests you serve. What would help Pip serve drinks?');
-        else response(lesson, 'Pip kept all 6 coins. The drink stand would cost some of those coins now and let Pip make sales. Try buying it.');
-        complete('budget');
+        var finalCoins=6-spent()+(stand.checked?6:0);
+        var won=stand.checked && finalCoins>=8;
+        var message=won?'Pip served all three guests and kept '+finalCoins+' coins.':
+          stand.checked?'Everyone got a drink, but Pip has '+finalCoins+' coins. Try spending less before opening.':
+          'Pip needs a way to serve drinks. Look for an item that makes that possible.';
+        missionResult(lesson,message,won);
+        if(won)complete('budget-mission');
       }
       setTimeout(serve,reduced.matches?0:350);
     });
@@ -1129,8 +1141,8 @@ print("All guests greeted!")</code></pre>
 
   function price(lesson) {
     var budgets=[1,2,2,3,4];
-    lesson.insertAdjacentHTML('beforeend','<h3>Set the price of a drink</h3>'+'<p>Each guest buys one drink if they can afford it. A drink costs Pip <b>1 coin</b> to make.</p>'+
-      '<div class="dive-range"><label for="price-price"><b>Drink price</b></label><input id="price-price" type="range" min="1" max="4" value="2"><output id="price-price-value" for="price-price"></output></div>'+
+    lesson.insertAdjacentHTML('beforeend','<h3>Find a price that works</h3>'+'<p>Sell to at least <b>three guests</b> and earn at least <b>4 coins in profit</b>. Each drink costs 1 coin to make.</p>'+
+      '<div class="dive-range"><label for="price-price"><b>Drink price</b></label><input id="price-price" type="range" min="1" max="4" value="3"><output id="price-price-value" for="price-price"></output></div>'+
       '<div class="dive-people" id="price-price-guests" aria-label="Guest budgets"></div><button class="dive-primary" id="price-run">Try this price</button>'+
       '<div class="dive-totals" id="price-price-totals" aria-live="polite"></div><p class="dive-response" role="status"></p>');
     var control=lesson.querySelector('#price-price'), run=lesson.querySelector('#price-run'), totals=lesson.querySelector('#price-price-totals'), people=lesson.querySelector('#price-price-guests');
@@ -1156,10 +1168,100 @@ print("All guests greeted!")</code></pre>
         draw(++processed);
         if(processed<budgets.length) { setTimeout(serve,reduced.matches?0:280);return; }
         control.disabled=run.disabled=false;
-        response(lesson, 'Profit is sales minus the cost of making the drinks. Compare prices of 2 and 3 coins. Which one serves more guests while making the same profit?');
-        complete('price');
+        var amount=Number(control.value);
+        var buyers=budgets.filter(function (coins) { return coins>=amount; }).length;
+        var profit=(amount-1)*buyers;
+        var won=buyers>=3 && profit>=4;
+        var message=won?'Pip sold '+buyers+' drinks and earned '+profit+' coins in profit.':
+          buyers<3?'Only '+buyers+' guests could afford that price. Try lowering it.':
+          'Pip made '+profit+' coins in profit. Try a price that earns more per drink.';
+        missionResult(lesson,message,won);
+        if(won)complete('price-mission');
       }
       setTimeout(serve,reduced.matches?0:280);
+    });
+    update();
+  }
+  function customerScene(message) {
+    return '<div class="mission-scene"><span class="mission-pip">'+robot(false)+'</span>'+
+      '<span class="mission-guest">'+guest(2,'asking')+'</span><p class="mission-speech">'+message+'</p></div>';
+  }
+  function missionResult(lesson,message,won) {
+    var feedback=lesson.querySelector('.dive-response');
+    feedback.classList.toggle('retry',!won);
+    response(lesson,(won?'Mission complete! ':'Try again. ')+message);
+    var scene=lesson.querySelector('.mission-scene');
+    if(scene){
+      scene.classList.toggle('mission-won',won);
+      scene.querySelector('.mission-guest').innerHTML=guest(2,won?'happy':'asking');
+    }
+  }
+  function clearMissionResult(lesson) {
+    response(lesson,'');
+    var scene=lesson.querySelector('.mission-scene');
+    if(scene && scene.classList.contains('mission-won')){
+      scene.classList.remove('mission-won');
+      scene.querySelector('.mission-guest').innerHTML=guest(2,'asking');
+    }
+  }
+  function variables(lesson) {
+    lesson.innerHTML='<h3>Deliver the right snack</h3><p>Set the <code>snack</code> variable to the guest’s order, then send it with Pip.</p>'+
+      customerScene('“I’d like soup, please!”')+
+      '<div class="mission-choices" role="group" aria-label="Choose a snack">'+
+      ['pizza','apple','soup'].map(function(food){
+        return '<button type="button" data-food="'+food+'" aria-pressed="false">'+food+'</button>';
+      }).join('')+'</div>'+
+      '<pre class="dive-console" data-code aria-label="Python code">snack = "…"\nprint(snack)</pre>'+
+      '<div class="mission-actions"><button type="button" class="dive-primary" data-run disabled>Send Pip</button></div>'+
+      '<p class="dive-response" role="status"></p>';
+    var selected='';
+    var run=lesson.querySelector('[data-run]');
+    var options=lesson.querySelectorAll('[data-food]');
+    options.forEach(function(button){
+      button.addEventListener('click',function(){
+        selected=button.dataset.food;
+        options.forEach(function(item){item.setAttribute('aria-pressed',String(item===button));});
+        lesson.querySelector('[data-code]').textContent='snack = "'+selected+'"\nprint(snack)';
+        run.disabled=false;
+        clearMissionResult(lesson);
+      });
+    });
+    run.addEventListener('click',function(){
+      var won=selected==='soup';
+      missionResult(lesson,won?'Pip delivered soup. print(snack) displays soup.':'Pip brought '+selected+'. Check what the guest asked for.',won);
+      if(won)complete('variables-mission');
+    });
+  }
+  function conditions(lesson) {
+    var requests={drink:'Wants a drink',cold:'Food is cold',napkin:'Needs a napkin'};
+    var actions={drink:'Bring a drink',cold:'Warm the meal',napkin:'Bring a napkin'};
+    function options(items) {
+      return Object.keys(items).map(function(key){return '<option value="'+key+'">'+items[key]+'</option>';}).join('');
+    }
+    lesson.innerHTML='<h3>Build Pip’s rule</h3><p>Choose what Pip should look for and what it should do when the rule matches.</p>'+
+      customerScene('“Could I have a drink?”')+
+      '<div class="mission-rule"><label for="condition-if"><b>IF the guest</b><select id="condition-if"><option value="">Choose a request</option>'+options(requests)+'</select></label>'+
+      '<label for="condition-then"><b>THEN Pip should</b><select id="condition-then"><option value="">Choose an action</option>'+options(actions)+'</select></label></div>'+
+      '<pre class="dive-console" data-code aria-label="Python code"></pre>'+
+      '<div class="mission-actions"><button type="button" class="dive-primary" data-run disabled>Test the rule</button></div>'+
+      '<p class="dive-response" role="status"></p>';
+    var condition=lesson.querySelector('#condition-if');
+    var action=lesson.querySelector('#condition-then');
+    var run=lesson.querySelector('[data-run]');
+    function update() {
+      lesson.querySelector('[data-code]').textContent='request = "Wants a drink"\nif request == "'+(requests[condition.value]||'…')+'":\n    print("'+(actions[action.value]||'…')+'")';
+      run.disabled=!condition.value || !action.value;
+      clearMissionResult(lesson);
+    }
+    condition.addEventListener('change',update);
+    action.addEventListener('change',update);
+    run.addEventListener('click',function(){
+      var won=condition.value==='drink' && action.value==='drink';
+      var message=won?'The request matched, and Pip brought the drink.':condition.value!=='drink'?
+        'The rule did not run. Pick the IF that matches the guest’s request.':
+        'The IF matched. Change the THEN action so Pip brings a drink.';
+      missionResult(lesson,message,won);
+      if(won)complete('conditions-mission');
     });
     update();
   }
@@ -1167,34 +1269,27 @@ print("All guests greeted!")</code></pre>
     variables: [
       { question:'In snack = "pizza", which part is the variable’s name?',
         choices:['snack','pizza','The equals sign'], answer:0,
-        explanation:'The name is on the left. The text value goes in quotes on the right.' },
-      { question:'What would print("snack") show?',
-        choices:['The selected food','The word snack','An empty line'], answer:1,
-        explanation:'Quotes tell Python to use the text inside them. Try comparing that with print(snack).' }
+        explanation:'The name is on the left. The text value goes in quotes on the right.' }
     ],
     loops: [
       { question:'How many turns does range(4) give the loop?',
         choices:['Three','Four','Five'], answer:1,
-        explanation:'The numbers are 0, 1, 2, and 3. Count those four turns.' },
-      { question:'In the example above, how many times does Python print “All guests greeted!”?',
-        choices:['Once','Three times','Four times'], answer:0,
-        explanation:'That line starts at the left edge, so Python runs it once after the loop.' }
+        explanation:'The numbers are 0, 1, 2, and 3. Count those four turns.' }
+    ],
+    conditions: [
+      { question:'What happens when an IF condition is false?',
+        choices:['Python skips the indented instruction','Python runs the instruction twice','Python changes the guest’s request'], answer:0,
+        explanation:'Python runs the indented instruction only when the condition is true.' }
     ],
     budget: [
       { question:'Buy only the stand, then serve all three guests. How many coins does Pip finish with?',
         amount:9, hint:'Subtract the stand price from the starting coins, then add what the three drinks earn.',
-        explanation:'Start with 6, spend 3, and earn 6. That leaves 9 coins.' },
-      { question:'With the stand already bought, what does Pip give up by buying decorations?',
-        choices:['Two coins it could have saved','The ability to sell drinks','All three guests'], answer:0,
-        explanation:'Decorations improve popularity for served guests. Pip gives up the chance to keep those two coins.' }
+        explanation:'Start with 6, spend 3, and earn 6. That leaves 9 coins.' }
     ],
     price: [
       { question:'Four drinks sell for two coins each. Each costs one coin to make. What is the profit?',
         amount:4, hint:'Calculate what the guests pay and what the four drinks cost to make. Subtract those costs from the sales revenue.',
-        explanation:'Guests pay 8 coins in total. Making the four drinks costs 4, so profit is 4 coins.' },
-      { question:'Try prices of 2 and 3 coins. Which serves more guests while earning the same profit?',
-        choices:['2 coins','3 coins','They serve the same number'], answer:0,
-        explanation:'At 2 coins, four guests buy. At 3 coins, two guests buy. Both prices earn 4 coins in profit.' }
+        explanation:'Guests pay 8 coins in total. Making the four drinks costs 4, so profit is 4 coins.' }
     ]
   };
   function renderChecks(lesson,key) {
@@ -1227,7 +1322,7 @@ print("All guests greeted!")</code></pre>
     lesson.appendChild(block);
   }
 
-  var demos={variables:variables,loops:loops,budget:budget,price:price};
+  var demos={variables:variables,loops:loops,conditions:conditions,budget:budget,price:price};
   lessonKeys.forEach(function (key) {
     var section=document.querySelector('[data-practice="'+key+'"]');
     demos[key](section);
