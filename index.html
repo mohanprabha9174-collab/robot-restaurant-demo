@@ -661,10 +661,6 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 /* Chef’s Challenge economy and route controls */
 .challenge-forecast { padding: 10px 13px; border: 1px solid #ADCEC3; border-radius: 10px; background: #E3F3EC; color: #174F46; }
 .challenge-forecast b { display: block; }
-.challenge-else { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; border: 2px solid #81BCB1; border-radius: 14px; background: #E3F3EC; color: #184F46; }
-.challenge-else p { margin: 4px 0 0; font-size: 14px; }
-.else-badge { display: inline-block; padding: 3px 7px; border-radius: 6px; background: #176653; color: white; font-size: 13px; font-weight: 850; }
-.challenge-else button[aria-pressed="true"] { background: #176653; color: white; }
 .delivery-panel { border-color: #D9CEE8; box-shadow: 0 8px 0 #E8DFF2; }
 .delivery-clock { background: linear-gradient(110deg, #35245C, #5B3BA6); }
 .delivery-clock.urgent { background: linear-gradient(110deg, #851B34, #B52D45); }
@@ -716,6 +712,19 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 }
 @media (prefers-reduced-motion: reduce) { .lively-board .podium-card { animation: none; } }
 
+
+/* A short walk from the right edge of the dining room to the table. */
+.customer-walk-in { animation: customer-enter .5s cubic-bezier(.25, .5, .45, 1) both; }
+.customer-stride { fill: none; stroke: #3A2B49; stroke-width: 14px; stroke-linecap: round; stroke-linejoin: round; transform-origin: 0 112px; animation: customer-step .23s ease-in-out alternate 2; }
+.customer-stride.step-b { animation-direction: alternate-reverse; }
+button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
+@keyframes customer-enter {
+  from { transform: translate(160px, 20px); }
+  40% { transform: translate(85px, 13px); }
+  to { transform: translate(0, 0); }
+}
+@keyframes customer-step { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
+@media (prefers-reduced-motion: reduce) { .customer-walk-in, .customer-stride { animation: none; } }
 </style>
 </head>
 <body>
@@ -1217,9 +1226,16 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     var seat = booth
       ? '<g class="booth"><rect x="' + (x + 34) + '" y="250" width="70" height="108" rx="20" fill="#E05A6D"/><rect x="' + (x + 34) + '" y="320" width="84" height="40" rx="14" fill="#C9445A"/></g>'
       : '<g><rect x="' + (x + 52) + '" y="262" width="12" height="96" rx="4" fill="#7A5A3E"/><rect x="' + (x + 36) + '" y="320" width="60" height="12" rx="4" fill="#9C7552"/><rect x="' + (x + 40) + '" y="332" width="8" height="40" fill="#7A5A3E"/><rect x="' + (x + 84) + '" y="332" width="8" height="40" fill="#7A5A3E"/></g>';
-    var who = diner
-      ? '<g transform="translate(' + (x + 62) + ',248) scale(.92)" class="diner">' + person(diner.person, diner.mood) + '</g>'
-      : '';
+    var who = '';
+    if (diner) {
+      if (diner.walking) {
+        who = '<g transform="translate(' + (x + 62) + ',226)"><g class="customer-walk-in">' +
+          '<g transform="scale(.78)"><path class="customer-stride step-a" d="M-17 112l-8 44h-10" />' +
+          '<path class="customer-stride step-b" d="M17 112l8 44h10" />' + person(diner.person, 'happy') + '</g></g></g>';
+      } else {
+        who = '<g transform="translate(' + (x + 62) + ',248) scale(.92)" class="diner">' + person(diner.person, diner.mood) + '</g>';
+      }
+    }
     var dish = diner && diner.food
       ? '<g transform="translate(' + (x - 4) + ',318)" class="dish"><ellipse cx="0" cy="0" rx="42" ry="9" fill="#fff" stroke="#D9CBB8" stroke-width="2"/>' + food(diner.food) + '</g>'
       : '<g transform="translate(' + (x - 4) + ',318)"><ellipse cx="0" cy="0" rx="34" ry="7" fill="#fff" stroke="#D9CBB8" stroke-width="2"/></g>';
@@ -1386,23 +1402,22 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     });
   }
 
-  function challengeDay(hard, rules, selected) {
+  function challengeDay(hard, rules, selected, fromGuest) {
     var coins = hard.coins, popularity = hard.popularity, log = [];
     var guestBonus = CHALLENGE_GUEST_UPGRADES.filter(function (id) {
       return selected.indexOf(id) !== -1;
     }).length * CHALLENGE_POPULARITY_PER_UPGRADE;
     var policy = hard.policy || { bonus: 0, protection: 0 };
-    hard.guests.some(function (guest) {
+    hard.guests.slice(fromGuest || 0).some(function (guest) {
       var checks = guest.needs.map(function (condition) {
         var check = RR.evaluateEvent(condition, rules, selected, popularity);
         if (check.action === 'tap_water' && condition === 'need_drink') check.outcome = 'basic';
         if (check.outcome === 'helpful' && check.action === 'apologize') check.outcome = 'partial';
-        if (check.outcome === 'unhandled' && hard.fallback) check.outcome = 'fallback';
         return check;
       });
       var helped = checks.every(function (check) { return check.outcome === 'helpful'; });
       var basic = !helped && checks.every(function (check) { return check.outcome === 'helpful' || check.outcome === 'basic'; });
-      var partial = !guest.vip && checks.some(function (check) { return check.outcome === 'partial' || check.outcome === 'fallback'; });
+      var partial = !guest.vip && checks[0].outcome === 'partial';
       var neutral = basic || partial;
       var factor = guest.vip ? 2 : 1;
       var cashChange = helped ? coinAmount(guest.pay * factor * (1 + policy.bonus / 100))
@@ -1458,10 +1473,10 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       '<h2 id="m-h" tabindex="-1">Chef’s Challenge rules</h2><div class="challenge-rule-grid">' +
       '<section><h3>Survive 3 days</h3><p>Start with <b>' + CHALLENGE_BUDGET + ' coins</b> and <b>5 popularity</b>. Each day has four guests. Rework your rules and buy upgrades between days. Your restaurant closes only if <b>popularity reaches zero</b>. If you run out of coins, you can keep serving guests and earn them back.</p></section>' +
       '<section><h3>Earn and invest</h3><p>Earn coins and <b>+0.5 popularity per request</b> when you fully help a guest. Comfy Booths and Fun Decorations each add <b>+0.5 per fully helped guest</b>. Miss a request and lose coins and popularity.</p>' +
-      '<p>Tap water is free to serve and earns no coins. The drink station earns the regular payout and popularity. For regular guests, the optional <b>ELSE</b> rule can ask the kitchen for help when no IF matches.</p>' +
+      '<p>Tap water is free to serve and earns no coins. The drink station earns the regular payout and popularity.</p>' +
       '<p>Pick one policy or save your coins. <b>Growth Fund</b> adds 30% income for 5 coins. <b>Steady Saver</b> adds 15% for 3. <b>Safety Net</b> reduces losses for 4.</p></section>' +
       '<section><h3>Look for VIP guests</h3><div class="vip-portraits" role="img" aria-label="Two VIP guests in suits carrying briefcases">' + portraits +
-      '</div><p>VIPs bring <b>two requests</b>. Fully serve both for <b>2× coins</b> and <b>+1 base popularity</b>. Tap water counts as basic service. An apology or asking the kitchen alone leaves a request unresolved. Miss either and lose <b>2× the coins and popularity</b>.</p></section></div>' +
+      '</div><p>VIPs bring <b>two requests</b>. Fully serve both for <b>2× coins</b> and <b>+1 base popularity</b>. Tap water counts as basic service. An apology alone leaves a request unresolved. Miss either and lose <b>2× the coins and popularity</b>.</p></section></div>' +
       '<label class="nickname">Leaderboard nickname (optional)<input name="nickname" maxlength="18" placeholder="e.g. PizzaPilot" autocomplete="off" spellcheck="false">' +
       '<small>Use a made-up nickname with letters, numbers, spaces, underscores, or hyphens. You can choose to post your result at the end.</small></label>' +
       '<div class="row"><button type="button" class="btn btn-quiet btn-small" data-act="close">Back</button>' +
@@ -1472,11 +1487,12 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   function challengeSimulation() {
     var e = S.day.log[S.eventIndex], guest = e.guest, revealed = S.phase === 3;
     var last = S.eventIndex === S.day.log.length - 1;
+    var walking = S.phase < 0;
     var label = guest.vip ? 'VIP guest' : 'Guest';
     var outcomeClass = e.helpful ? 'good' : e.basic || e.partial ? 'partial' : 'bad';
     var outcomeTitle = e.helpful ? 'Guest helped!' : e.basic ? 'Basic service' : e.partial ? 'Partial credit' : 'Service fell short';
     var outcomeNote = e.basic ? 'Pip served tap water. You kept your coins and popularity at the same level.' :
-      e.partial ? 'Pip asked the kitchen for help. Your coins and popularity stayed the same.' :
+      e.partial ? 'Pip apologized and let the kitchen know. Your coins and popularity stayed the same.' :
       guest.vip && !e.helpful ? 'At least one of the VIP’s requests went unresolved.' :
       !e.helpful ? 'Pip couldn’t help this guest.' : '';
     var requests = e.checks.map(function (check) {
@@ -1485,8 +1501,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
         check.missingUpgrade ? 'Pip needed the ' + RR.UPGRADE[check.missingUpgrade].short.toLowerCase() + ' to ' + action.verb + '.' :
         check.outcome === 'unhelpful' ? 'Rule ' + (check.ruleIndex + 1) + ' told Pip to ' + action.verb + ', which didn’t help with this request.' :
         'Pip: “' + action.line + '”';
-      if (check.outcome === 'fallback') response = 'ELSE ran. Pip asked the kitchen for help.';
-      if ((check.outcome === 'fallback' || check.outcome === 'partial') && guest.vip) response += ' The VIP still needs this request fulfilled.';
+      if (check.outcome === 'partial' && guest.vip) response += ' The VIP still needs this request fulfilled.';
       return '<li>“' + esc(RR.CONDITION[check.condition].says) + '”' +
         (revealed ? '<br><b>' + esc(response) + '</b>' : '') + '</li>';
     }).join('');
@@ -1494,7 +1509,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       selected: S.selected, robotX: revealed ? 500 : 420,
       robot: { mood: revealed && !e.helpful && !e.basic ? 'sorry' : 'happy' },
       diner: { person: guest.person, mood: revealed ? (e.helpful || e.basic ? 'happy' : e.partial ? 'asking' : 'sad') : 'asking',
-        food: RR.CONDITION[guest.needs[0]].food },
+        food: walking ? null : RR.CONDITION[guest.needs[0]].food, walking: walking },
       label: label + ' at a table with Pip the robot'
     });
     return topbar() + '<main class="screen"><div class="screen-head"><div><h1 tabindex="-1" data-focus>Serve the guests</h1>' +
@@ -1502,13 +1517,13 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       challengeStatus(revealed ? e.coinsAfter : e.coinsBefore, revealed ? e.scoreAfter : e.scoreBefore) + '</div>' +
       '<div class="sim-grid"><div class="scene-box">' + art + '</div><div class="panel">' +
       '<b' + (guest.vip ? ' class="vip-tag"' : '') + '>' + label + ' ' + (S.eventIndex + 1) + ' of 4</b>' +
-      '<ul class="guest-requests">' + requests + '</ul>' +
+      (walking ? '<p>The next guest is taking a seat…</p>' : '<ul class="guest-requests">' + requests + '</ul>') +
       (revealed ? '<div class="result challenge-guest-result ' + outcomeClass + '"><h3>' + outcomeTitle + '</h3>' +
         (outcomeNote ? '<p>' + outcomeNote + '</p>' : '') +
         '<p>Coins ' + e.coinsBefore + ' → ' + e.coinsAfter + '<br>Popularity ' + e.scoreBefore + ' → ' + e.scoreAfter + '</p>' +
         (e.popularityBonus ? '<p><b>+' + e.popularityBonus + ' popularity from restaurant upgrades</b></p>' : '') + '</div>' : '') +
-      '<button class="btn btn-go" data-act="next" data-k="next">' +
-      (!revealed ? 'Show what happens' : last ? 'See day results' : 'Next guest') + I('right') + '</button></div></div></main>';
+      '<button class="btn btn-go" data-act="next" data-k="next"' + (walking ? ' aria-disabled="true"' : '') + '>' +
+      (walking ? 'Guest arriving…' : !revealed ? 'Show what happens' : last ? 'See day results' : 'Next guest') + I('right') + '</button></div></div></main>';
   }
 
   function challengeResults() {
@@ -1519,7 +1534,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       return '<li><span class="n">' + (i + 1) + '</span><span>' + (e.guest.vip ? 'VIP guest' : 'Guest') +
         ' · ' + (e.helpful ? 'Helped' : e.basic ? 'Basic service' : e.partial ? 'Partial credit' : 'Missed a request') + '</span><span>' + e.coinsBefore + ' → ' + e.coinsAfter + ' coins</span></li>';
     }).join('') : '';
-    var deliveryReceipt = h.day === 1 && h.delivery && h.delivery.summary ?
+    var deliveryReceipt = h.delivery && h.deliveryDay === h.day && h.delivery.summary ?
       '<p><b>Lunch Rush Delivery:</b> ' + esc(h.delivery.summary) + '</p>' : '';
     var reason = h.status === 'lost' ? '<p>' + challengeLossReason() + '</p>' : '';
     return topbar() + '<main class="screen"><div class="screen-head"><div><h1 tabindex="-1" data-focus>' + title + '</h1>' + reason + '</div>' +
@@ -1610,7 +1625,8 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 
   function beginChallenge(nickname) {
     S.hard = { nickname: nickname, day: 1, completed: 0, coins: CHALLENGE_BUDGET, popularity: RR.BASE_POPULARITY,
-      policy: null, fallback: false, status: 'playing', guests: challengeGuests(1) };
+      policy: null, status: 'playing', guests: challengeGuests(1),
+      deliveryDay: 1 + Math.floor(Math.random() * 3), deliveryAfterGuest: 1 + Math.floor(Math.random() * 3) };
     go('budget');
   }
 
@@ -1692,7 +1708,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
         (!planning || goalReached ? ' disabled' : '') + '>' + direction[2] + '</button>';
     }).join('');
     return topbar() + '<main class="screen delivery-screen"><div class="screen-head"><div>' +
-      '<p class="delivery-kicker">Day 1 · Service event</p><h1 tabindex="-1" data-focus>Lunch Rush Delivery</h1>' +
+      '<p class="delivery-kicker">Day ' + S.hard.day + ' · Service event</p><h1 tabindex="-1" data-focus>Lunch Rush Delivery</h1>' +
       '<p>Table 4 is waiting for its pasta. Guide Pip from the kitchen to the table before the order goes cold.</p></div>' +
       challengeStatus(S.hard.coins, S.hard.popularity) + '</div><section class="delivery-panel">' +
       '<div class="delivery-clock' + (planning && seconds <= 10 ? ' urgent' : '') + '" id="delivery-clock">' +
@@ -1715,6 +1731,9 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   }
 
   function beginDelivery() {
+    var lastGuest = S.day.log[S.eventIndex];
+    S.hard.coins = lastGuest.coinsAfter;
+    S.hard.popularity = lastGuest.scoreAfter;
     S.hard.delivery = {
       status: 'planning', seconds: DELIVERY_SECONDS,
       deadline: Date.now() + DELIVERY_SECONDS * 1000,
@@ -1740,8 +1759,17 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   function deliveryAction(action, id) {
     var event = S.hard.delivery;
     if (action === 'delivery-continue' && (event.status === 'delivered' || event.status === 'expired')) {
-      if (S.hard.popularity === 0) return showChallengeLoss();
-      return startDay();
+      var nextGuest = S.eventIndex + 1;
+      var served = S.day.log.slice(0, nextGuest);
+      var h = S.hard;
+      if (h.popularity === 0) {
+        S.day = { log: served, coins: h.coins, popularity: h.popularity };
+        return showChallengeLoss();
+      }
+      var remaining = challengeDay(h, S.rules, S.selected, nextGuest);
+      remaining.log = served.concat(remaining.log);
+      S.day = remaining;
+      return enterGuest();
     }
     if (event.status !== 'planning') return;
     if (Date.now() >= event.deadline) return finishDelivery(false);
@@ -1897,14 +1925,6 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     return RR.ACTIONS.filter(function (action) { return S.hard || !action.hardOnly; });
   }
 
-  function fallbackBlock() {
-    if (!S.hard) return '';
-    return '<section class="challenge-else" aria-label="Else rule"><div><span class="else-badge">ELSE</span> ' +
-      '<strong>Ask the kitchen for help</strong><p>Runs when no IF matches. For regular guests, coins and popularity stay the same. VIPs still need their requests filled.</p></div>' +
-      '<button type="button" class="btn btn-quiet btn-small" data-act="toggle-fallback" data-k="toggle-fallback" ' +
-      'aria-label="Use ELSE rule" aria-pressed="' + S.hard.fallback + '">' + (S.hard.fallback ? 'On' : 'Off') + '</button></section>';
-  }
-
   function code() {
     var notes = RR.ruleNotes(S.rules, S.selected);
     var tickets = S.rules.map(function (r, i) {
@@ -1946,7 +1966,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       armbar +
       '<div class="rail-top"><h2>Robot’s rules</h2><span class="hint">Checked from top to bottom</span></div>' +
       '<div class="rail-bar" aria-hidden="true"></div>' +
-      '<ol class="rail" style="list-style:none;margin:0;padding:0">' + tickets + '</ol>' + fallbackBlock() + '</section>';
+      '<ol class="rail" style="list-style:none;margin:0;padding:0">' + tickets + '</ol></section>';
 
     return topbar() + '<main class="screen">' +
       '<div class="screen-head"><div><h1 tabindex="-1" data-focus>Train your robot</h1>' +
@@ -2024,7 +2044,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     var sceneHtml = ART.scene({
       selected: S.selected, robotX: showBot ? 500 : 420,
       robot: { mood: showBot ? mood : 'happy', holding: showBot ? holding : null },
-      diner: { person: S.eventIndex, mood: custMood, food: c.food },
+      diner: { person: S.eventIndex, mood: custMood, food: S.phase < 0 ? null : c.food, walking: S.phase < 0 },
       label: 'Customer ' + (S.eventIndex + 1) + ' at a table with the robot waiter'
     });
 
@@ -2033,7 +2053,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       '<div class="cust-count" aria-label="Customer ' + (S.eventIndex + 1) + ' of 4">Customer ' + (S.eventIndex + 1) + ' of ' + S.day.log.length + ' <span style="display:flex;gap:4px" aria-hidden="true">' + dots + '</span></div></div>' +
       '<div class="sim-grid" data-phase="' + S.phase + '" id="sim">' +
       '<div class="sim-stage"><div class="scene-box">' + sceneHtml + '</div>' +
-      '<div class="bubble cust"><span class="who">Customer</span>“' + esc(c.says) + '”</div>' +
+      '<div class="bubble cust"><span class="who">Customer</span>' + (S.phase < 0 ? 'The next customer is taking a seat…' : '“' + esc(c.says) + '”') + '</div>' +
       '<div class="bubble bot p2"><span class="who">Pip the robot</span>“' + esc(robotLine) + '”</div></div>' +
       '<div class="panel">' +
       '<div class="meter"><span class="lbl">Popularity</span><span class="num" id="score">' + shownScore + '</span>' + stars(shownScore) + '</div>' +
@@ -2041,7 +2061,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       '<div class="p3 result ' + (good ? 'good' : 'bad') + '"><span class="delta">' + (good ? '+1' : '−1') + '</span><h3>' + esc(title) + '</h3><p>' + esc(body) + '</p></div>' +
       '<div class="p3 scoreline">Popularity ' + e.scoreBefore + ' → ' + e.scoreAfter + (clamped ? ' (it can’t go below 0)' : '') + '</div>' +
       '<div class="sim-controls">' +
-      '<button class="btn btn-go" data-act="next" data-k="next">' + (S.phase < 3 ? 'Show what happens' : last ? 'See results' : 'Next customer') + I('right') + '</button>' +
+      '<button class="btn btn-go" data-act="next" data-k="next"' + (S.phase < 0 ? ' aria-disabled="true"' : '') + '>' + (S.phase < 0 ? 'Customer arriving…' : S.phase < 3 ? 'Show what happens' : last ? 'See results' : 'Next customer') + I('right') + '</button>' +
       '<button class="btn btn-quiet btn-small" data-act="auto" data-k="auto" aria-pressed="' + S.autoplay + '">' + I(S.autoplay ? 'pause' : 'play') + (S.autoplay ? 'Pause' : 'Auto play') + '</button>' +
       '</div></div></div>' +
       '<div class="bottombar"><button class="btn btn-quiet btn-small" data-act="go-code" data-k="back-code">' + I('left') + 'Back to rules</button></div>' +
@@ -2157,7 +2177,6 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     announce('Rule ' + (i + 1) + ' ' + (kind === 'if' ? 'IF' : 'THEN') + ': ' + d.label + '.' + note);
   }
   function startDay() {
-    if (S.hard && S.hard.day === 1 && !S.hard.delivery) return beginDelivery();
     S.day = S.hard ? challengeDay(S.hard, S.rules, S.selected) : RR.simulateDay(S.rules, S.selected, S.lineup);
     S.eventIndex = 0; S.phase = 0; S.modal = null; S.armed = null; S.handbook = false;
     go('simulation');
@@ -2166,8 +2185,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   function confirmStart() {
     var c = RR.startCheck(S.rules, S.selected);
     var lines = [];
-    if (c.complete === 0) lines.push(S.hard && S.hard.fallback ?
-      'Pip has an ELSE rule, but no finished IF/THEN rules yet.' : 'Your robot has no finished rules yet.');
+    if (c.complete === 0) lines.push('Your robot has no finished rules yet.');
     if (c.incomplete) lines.push(c.incomplete + ' rule' + (c.incomplete > 1 ? 's are' : ' is') + ' missing an IF or a THEN, so ' + (c.incomplete > 1 ? 'they' : 'it') + ' won’t run.');
     if (c.needsUpgrade) lines.push(c.needsUpgrade + ' rule' + (c.needsUpgrade > 1 ? 's need' : ' needs') + ' an upgrade you didn’t buy.');
     if (!lines.length) return startDay();
@@ -2207,14 +2225,33 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   function scheduleAuto() {
     if (S.autoplay && S.phase === 3) later(function () { if (S.autoplay) next(); }, 3500);
   }
+  function enterGuest() {
+    clearTimers();
+    S.eventIndex++;
+    S.phase = REDUCED ? 0 : -1;
+    if (S.screen === 'delivery') go('simulation');
+    else render();
+    if (REDUCED) return reveal();
+    later(function () {
+      S.phase = 0;
+      render();
+      reveal();
+    }, 520);
+  }
+
   var lockUntil = 0;
   function next() {
+    if (S.phase < 0) return;
     var now = Date.now();
     if (now < lockUntil) return;
     lockUntil = now + 450;
     if (S.phase < 3) { clearTimers(); setPhase(3); scheduleAuto(); return; }
-    if (S.eventIndex < S.day.log.length - 1) { S.eventIndex++; S.phase = 0; render(); reveal(); }
-    else if (S.hard) finishChallengeDay();
+    if (S.eventIndex < S.day.log.length - 1) {
+      var h = S.hard;
+      if (h && !h.delivery && h.day === h.deliveryDay && S.eventIndex + 1 === h.deliveryAfterGuest) return beginDelivery();
+      return enterGuest();
+    }
+    if (S.hard) finishChallengeDay();
     else go('results');
   }
 
@@ -2240,11 +2277,6 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       case 'play': beep('tap'); return go('budget');
       case 'challenge': beep('tap'); S.modal = { type: 'challenge', returnK: 'challenge' }; return render();
       case 'start-challenge': return startChallenge();
-      case 'toggle-fallback':
-        if (!S.hard || S.screen !== 'code') return;
-        S.hard.fallback = !S.hard.fallback;
-        announce(S.hard.fallback ? 'ELSE rule on.' : 'ELSE rule off.');
-        return render();
       case 'invest':
         var policy = POLICIES.find(function (item) { return item.id === id; });
         if (!policy || S.hard.policy || !canSpendChallenge(policy.price)) return;
