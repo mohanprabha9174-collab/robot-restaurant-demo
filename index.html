@@ -732,6 +732,12 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
   .reuse-rules-bar .coins { margin-right: auto; }
   .reuse-rules-bar .btn { font-size: 15px; min-height: 44px; padding-inline: 10px; }
 }
+
+.rank-score, .podium-points { font-weight: 850; color: var(--plum-deep); }
+@media (max-width: 375px) {
+  .score-table th, .score-table td { padding-inline: 2px; }
+  .score-table thead { font-size: 11px; }
+}
 </style>
 </head>
 <body>
@@ -1546,7 +1552,8 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     var reason = h.status === 'lost' ? '<p>' + challengeLossReason() + '</p>' : '';
     return topbar() + '<main class="screen"><div class="screen-head"><div><h1 tabindex="-1" data-focus>' + title + '</h1>' + reason + '</div>' +
       challengeStatus(h.coins, h.popularity) + '</div><section class="receipt"><h2>Restaurant receipt</h2>' +
-      '<p>Days completed: <b>' + h.completed + ' of 3</b></p>' + deliveryReceipt + '<ol class="rlog">' + log + '</ol></section>' +
+      '<p>Days completed: <b>' + h.completed + ' of 3</b></p>' +
+      (final ? '<p class="rank-score">Final score: ' + challengeScore({ days: h.completed, coins: h.coins, popularity: h.popularity }) + ' points</p>' : '') + deliveryReceipt + '<ol class="rlog">' + log + '</ol></section>' +
       '<div class="bottombar">' + (final
         ? '<button class="btn btn-quiet btn-small" data-act="board">Leaderboard</button>' +
           (h.nickname ? '<button class="btn btn-plum btn-small" data-act="save-score">Save score as ' + esc(h.nickname) + '</button>' : '') +
@@ -1556,7 +1563,13 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
 
   var scores = [];
   var SCORE_KEY = 'robot-restaurant-challenge-scores-v1';
-  function scoreOrder(a, b) { return b.days - a.days || b.popularity - a.popularity || b.coins - a.coins; }
+  function challengeScore(entry) {
+    return coinAmount(100 * entry.days + 5 * entry.coins + 10 * entry.popularity);
+  }
+
+  function scoreOrder(a, b) {
+    return challengeScore(b) - challengeScore(a) || b.days - a.days || b.popularity - a.popularity || b.coins - a.coins;
+  }
 
   function readScores() {
     try {
@@ -1587,12 +1600,13 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     var podium = ranked.slice(0, 3).map(function (entry, i) {
       return '<li class="podium-card podium-' + (i + 1) + (i === personal ? ' personal-score' : '') + '" style="--rank:' + i + '">' +
         '<span class="podium-rank" aria-label="Rank ' + (i + 1) + '">#' + (i + 1) + '</span><strong>' + esc(entry.nickname) + '</strong>' +
-        '<span>' + esc(entry.days) + '/3 days · ' + esc(entry.popularity) + ' popularity</span></li>';
+        '<span class="podium-points">' + challengeScore(entry) + ' points</span></li>';
     }).join('');
     var rows = ranked.map(function (entry, i) {
       return '<tr' + (i === personal ? ' class="personal-score"' : '') + '><td>' + (i + 1) + '</td><th scope="row">' +
         esc(entry.nickname) + (i === personal ? ' <span class="your-score-tag">Your best</span>' : '') + '</th><td>' +
-        esc(entry.days) + '/3</td><td>' + esc(entry.popularity) + '</td><td>' + esc(entry.coins) + '</td></tr>';
+        esc(entry.days) + '/3</td><td>' + esc(entry.popularity) + '</td><td>' + esc(entry.coins) +
+        '</td><td class="rank-score">' + challengeScore(entry) + '</td></tr>';
     }).join('');
     var result = submitted && !board.loading ?
       '<p class="board-personal-note">' + (personal < 0 ? 'This run is outside the top 10.' :
@@ -1600,10 +1614,10 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
         'Your best is ranked #' + (personal + 1) + '!') + '</p>' : '';
     return topbar() + '<main class="screen"><div class="screen-head"><div><h1 tabindex="-1" data-focus>Chef’s Challenge leaderboard</h1>' +
       '<p role="status">' + esc(board.label) + '</p></div></div><section class="challenge-board lively-board"><h2>Top 10</h2>' +
-      '<p>Ranked by days completed, then popularity, then coins.</p>' + result +
+      '<p><b>Score</b> = 100 points per day completed + 5 per coin left + 10 per point of popularity. Highest total ranks first.</p>' + result +
       (rows ? '<ol class="score-podium" aria-label="Top three chefs">' + podium + '</ol><table class="score-table">' +
         '<thead><tr><th scope="col">Rank</th><th scope="col">Chef</th><th scope="col">Days</th>' +
-        '<th scope="col">Popularity</th><th scope="col">Coins</th></tr></thead><tbody>' + rows + '</tbody></table>' :
+        '<th scope="col">Popularity</th><th scope="col">Coins</th><th scope="col">Score</th></tr></thead><tbody>' + rows + '</tbody></table>' :
         '<p class="board-empty">' + (board.loading ? 'Checking for scores…' :
           'No scores yet. Enter a nickname before your next challenge, then save your score at the end.') + '</p>') +
       '</section><div class="bottombar"><button class="btn btn-quiet" data-act="board-back" data-k="board-back">' + I('left') + 'Back</button></div></main>';
