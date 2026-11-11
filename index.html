@@ -2051,7 +2051,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     return topbar() + '<main class="screen">' +
       '<div class="screen-head"><div><h1 tabindex="-1" data-focus>Restaurant day</h1><p>Watch which rule your robot uses.</p></div>' +
       '<div class="cust-count" aria-label="Customer ' + (S.eventIndex + 1) + ' of 4">Customer ' + (S.eventIndex + 1) + ' of ' + S.day.log.length + ' <span style="display:flex;gap:4px" aria-hidden="true">' + dots + '</span></div></div>' +
-      '<div class="sim-grid" data-phase="' + S.phase + '" id="sim">' +
+      '<div class="sim-grid" data-phase="' + Math.max(0, S.phase) + '" id="sim">' +
       '<div class="sim-stage"><div class="scene-box">' + sceneHtml + '</div>' +
       '<div class="bubble cust"><span class="who">Customer</span>' + (S.phase < 0 ? 'The next customer is taking a seat…' : '“' + esc(c.says) + '”') + '</div>' +
       '<div class="bubble bot p2"><span class="who">Pip the robot</span>“' + esc(robotLine) + '”</div></div>' +
