@@ -269,6 +269,10 @@ h1, h2, h3 { font-family: var(--display); line-height: 1.05; margin: 0; text-wra
 .palette .block > .ico { display: none; }
 .palette .block { font-size: 15.5px; gap: 4px; padding-block: 5px; }
 .palette .block .kw { display: none; }
+.challenge-palette .block.b-if { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 5px; }
+.challenge-palette .b-if .kw { display: inline-block; grid-area: 1 / 1; justify-self: start; }
+.challenge-palette .b-if .txt { grid-area: 2 / 1; }
+.challenge-palette .b-if .block-grip { grid-area: 1 / 2 / 3; align-self: center; }
 .palette .block .txt { flex: 1; overflow-wrap: anywhere; }
 .block-grip {
   flex: none; display: grid; place-items: center; width: 44px; height: 44px;
@@ -687,11 +691,11 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 
   var CONDITIONS = [
     { id: 'cold_food', label: 'Food is cold', says: 'My pizza is cold!', food: 'pizza',
-      story: "A customer's pizza was cold", problem: 'the cold pizza' },
+      story: "A customer said their pizza was cold", problem: 'the cold pizza' },
     { id: 'wrong_order', label: 'Order is wrong', says: "This isn't what I ordered!", food: 'soup',
       story: 'A customer got the wrong order', problem: 'the wrong order' },
-    { id: 'food_not_right', label: "Food isn't right", says: 'My veggie burger is too juicy!', food: 'burger',
-      story: 'A customer said their veggie burger was too juicy', problem: 'the too-juicy burger' },
+    { id: 'food_not_right', label: "Food isn't right", says: 'I asked for no onions on my burger. Could you remake it?', food: 'burger',
+      story: 'A customer wanted their burger without onions', problem: 'the burger with onions' },
     { id: 'need_drink', label: 'Wants a drink', says: 'Could I have some water?', food: 'water',
       story: 'A customer asked for water', problem: 'the water request' },
     { id: 'praise', label: 'Likes the meal', says: 'This tastes amazing!', food: 'pasta',
@@ -1112,7 +1116,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     out.push('<rect x="12" y="168" width="324" height="20" rx="6" fill="#E9563A"/><rect x="24" y="188" width="300" height="102" fill="#BE3E1F"/><rect x="40" y="204" width="120" height="70" rx="6" fill="#D24E2F"/><rect x="188" y="204" width="120" height="70" rx="6" fill="#D24E2F"/>');
     // menu board
     out.push('<rect x="356" y="40" width="160" height="104" rx="10" fill="#2F2440"/><text x="436" y="68" text-anchor="middle" class="sc-menu-h">MENU</text>' +
-      '<text x="372" y="92" class="sc-menu">Veggie pizza</text><text x="372" y="112" class="sc-menu">Veggie burger</text><text x="372" y="132" class="sc-menu">Tomato soup</text>');
+      '<text x="372" y="92" class="sc-menu">Veggie pizza</text><text x="372" y="112" class="sc-menu">Burger</text><text x="372" y="132" class="sc-menu">Tomato soup</text>');
 
     // upgrades
     if (has(sel, 'warming_station')) out.push('<g class="up up-warming_station' + fr('warming_station') + '"><rect x="56" y="122" width="76" height="12" rx="4" fill="#8F91F5"/><path d="M94 104 v18" stroke="#8F91F5" stroke-width="5"/><rect x="60" y="148" width="68" height="20" rx="5" fill="#F4C25B"/><path d="M72 142 q-4 -6 0 -12 M94 142 q-4 -6 0 -12 M116 142 q-4 -6 0 -12" stroke="#E9563A" stroke-width="4" fill="none" stroke-linecap="round" class="heat"/></g>');
@@ -1336,7 +1340,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       });
       coins = nextCoins;
       popularity = nextPop;
-      return coins <= 0 || popularity < 1;
+      return popularity === 0;
     });
     return { log: log, coins: coins, popularity: popularity };
   }
@@ -1374,7 +1378,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     }).join('');
     return '<div class="modal challenge-rules" role="dialog" aria-modal="true" aria-labelledby="m-h">' +
       '<h2 id="m-h" tabindex="-1">Chef’s Challenge rules</h2><div class="challenge-rule-grid">' +
-      '<section><h3>Survive 3 days</h3><p>Start with <b>' + CHALLENGE_BUDGET + ' coins</b> and <b>5 popularity</b>. Each day has four guests. Rework your rules and buy upgrades between days. During service, your run ends at <b>0 coins</b> or below <b>1 popularity</b>.</p></section>' +
+      '<section><h3>Survive 3 days</h3><p>Start with <b>' + CHALLENGE_BUDGET + ' coins</b> and <b>5 popularity</b>. Each day has four guests. Rework your rules and buy upgrades between days. Your restaurant closes only if <b>popularity reaches zero</b>. If you run out of coins, you can keep serving guests and earn them back.</p></section>' +
       '<section><h3>Earn and invest</h3><p>Earn coins and <b>+0.5 popularity per request</b> when you fully help a guest. Comfy Booths and Fun Decorations each add <b>+0.5 per fully helped guest</b>. Miss a request and lose coins and popularity.</p>' +
       '<p>An apology for a regular guest’s food problem earns partial credit. Coins and popularity stay the same.</p>' +
       '<p>Pick one policy or save your coins. <b>Growth Fund</b> adds 30% income for 5 coins. <b>Steady Saver</b> adds 15% for 3. <b>Safety Net</b> reduces losses for 4.</p></section>' +
@@ -1394,14 +1398,18 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     var label = guest.vip ? 'VIP guest' : 'Guest';
     var outcomeClass = e.helpful ? 'good' : e.partial ? 'partial' : 'bad';
     var outcomeTitle = e.helpful ? 'Guest helped!' : e.partial ? 'Partial credit' : 'Service fell short';
-    var outcomeNote = e.partial ? 'Pip apologized. No coins or popularity gained or lost.' :
-      guest.vip && !e.helpful ? 'VIP guests need both requests solved.' : '';
+    var outcomeNote = e.partial ? 'Pip apologized and let the kitchen know. Your coins and popularity stayed the same.' :
+      guest.vip && !e.helpful ? 'At least one of the VIP’s requests went unresolved.' :
+      !e.helpful ? 'Pip couldn’t help this guest.' : '';
     var requests = e.checks.map(function (check) {
-      var action = check.action ? RR.ACTION[check.action].label : 'No rule matched';
-      if (check.missingUpgrade) action += ' (upgrade needed)';
-      if (check.outcome === 'partial') action += guest.vip ? ' (request unresolved)' : ' (partial credit)';
+      var action = check.action && RR.ACTION[check.action];
+      var response = !action ? 'Pip had no rule for this request.' :
+        check.missingUpgrade ? 'Pip needed the ' + RR.UPGRADE[check.missingUpgrade].short.toLowerCase() + ' to ' + action.verb + '.' :
+        check.outcome === 'unhelpful' ? 'Rule ' + (check.ruleIndex + 1) + ' told Pip to ' + action.verb + ', which didn’t help with this request.' :
+        'Pip: “' + action.line + '”';
+      if (check.outcome === 'partial' && guest.vip) response += ' This request still needs a fix.';
       return '<li>“' + esc(RR.CONDITION[check.condition].says) + '”' +
-        (revealed ? '<br><b>' + (check.outcome === 'helpful' ? '✓ ' : check.outcome === 'partial' ? '' : '× ') + esc(action) + '</b>' : '') + '</li>';
+        (revealed ? '<br><b>' + esc(response) + '</b>' : '') + '</li>';
     }).join('');
     var art = ART.scene({
       selected: S.selected, robotX: revealed ? 500 : 420,
@@ -1530,8 +1538,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   }
 
   function challengeLossReason() {
-    return S.hard.coins === 0 ? 'Your restaurant went bankrupt.' :
-      'The reviews went cold. With popularity below 1, Pip flipped the sign to CLOSED.';
+    return 'Your popularity hit zero. With no happy customers left, Pip flipped the sign to CLOSED.';
   }
 
   function showChallengeLoss() {
@@ -1543,7 +1550,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     var h = S.hard;
     h.coins = S.day.coins;
     h.popularity = S.day.popularity;
-    if (h.coins === 0 || h.popularity < 1) return showChallengeLoss();
+    if (h.popularity === 0) return showChallengeLoss();
     h.completed = h.day;
     if (h.day === 3) h.status = 'won';
     go('results');
@@ -1644,7 +1651,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       return tickDelivery();
     }
     if (action === 'delivery-continue' && (event.status === 'delivered' || event.status === 'expired')) {
-      if (S.hard.coins === 0 || S.hard.popularity < 1) return showChallengeLoss();
+      if (S.hard.popularity === 0) return showChallengeLoss();
       return startDay();
     }
     if (event.status !== 'planning') return;
@@ -1712,7 +1719,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     event.summary = (coinChange > 0 ? '+' : '') + coinChange + (Math.abs(coinChange) === 1 ? ' coin · ' : ' coins · ') +
       (popularityChange > 0 ? '+' : '') + popularityChange + ' popularity';
     event.message = delivered ? 'Table 4 got its pasta hot. ' + event.summary + '.' :
-      'You compensated Table 4 for the cold meal. ' + event.summary + '.';
+      'Table 4’s pasta went cold, so you gave them a discount. ' + event.summary + '.';
     beep(delivered ? 'good' : 'bad');
     render();
     var result = app.querySelector('#delivery-result');
@@ -1824,7 +1831,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
         '<button class="btn btn-quiet btn-small" data-act="disarm" data-k="disarm">Cancel</button></div>';
     }
 
-    var palette = '<section class="palette" aria-label="Blocks">' +
+    var palette = '<section class="palette' + (S.hard ? ' challenge-palette' : '') + '" aria-label="Blocks">' +
       '<h2>' + I('cold_food') + 'IF blocks</h2><p class="hint">What a customer might say.</p>' +
       '<div class="blocks">' + RR.CONDITIONS.map(function (c) { return blockHTML('if', c.id, { palette: true }); }).join('') + '</div>' +
       '<h2>' + I('robot') + 'THEN blocks</h2><p class="hint">What your robot will do.</p>' +
@@ -1832,7 +1839,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       '</section>';
 
     var main = '<section class="rail" aria-label="Your robot’s rules">' +
-      '<div class="code-hint">' + I('robot') + '<span>When a customer says the IF part, your robot tries the THEN part. ' +
+      '<div class="code-hint">' + I('robot') + '<span>When a customer’s request matches an IF block, Pip tries the action in its THEN block. ' +
       (S.hard ? 'Apologies earn partial credit for regular food complaints. VIPs need both requests solved.' : 'Today’s customers might have food problems or ask for things.') + '</span></div>' +
       armbar +
       '<div class="rail-top"><h2>Robot’s rules</h2><span class="hint">Checked from top to bottom</span></div>' +
@@ -1873,7 +1880,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     return '<aside class="handbook drawer" aria-labelledby="hb-h" data-k="hb-panel">' +
       '<div class="handbook-head"><h2 id="hb-h" tabindex="-1">Robot Waiter Handbook: Things Customers Might Say</h2>' +
       '<button class="btn btn-quiet btn-small" data-act="hb" data-k="hb-close" aria-expanded="true">' + I('x') + 'Back to my rules</button></div>' +
-      '<p class="lead">When a customer says the IF part, your robot tries the THEN part.</p>' + entries +
+      '<p class="lead">When a customer’s request matches an IF block, Pip tries the action in its THEN block.</p>' + entries +
       '<p class="older"><b>Older players:</b> If two rules have the same IF, the first one wins.</p>' +
       '<p class="hint" style="margin:0;font-size:13px;color:var(--ink-2)">These are sample ideas for the game, not real restaurant numbers.</p>' +
       '</aside>';
@@ -2076,7 +2083,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       var e = S.day.log[S.eventIndex];
       if (S.hard) {
         beep(e.helpful ? 'good' : e.partial ? 'tap' : 'bad');
-        if (e.coinsAfter === 0 || e.scoreAfter < 1) return finishChallengeDay();
+        if (e.scoreAfter === 0) return finishChallengeDay();
         announce((e.helpful ? 'Guest helped. ' : e.partial ? 'Partial credit for an apology. ' : 'Service fell short. ') + e.coinsAfter + ' coins. Popularity is ' + e.scoreAfter + '.');
         return render();
       }
