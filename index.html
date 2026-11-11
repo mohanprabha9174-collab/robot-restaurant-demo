@@ -738,6 +738,13 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
   .score-table th, .score-table td { padding-inline: 2px; }
   .score-table thead { font-size: 11px; }
 }
+
+.challenge-loan { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border: 2px solid #D6C5EE; border-radius: 16px; background: #F1EAF9; color: #3F2780; }
+.challenge-loan h2 { font-size: 20px; }
+.challenge-loan p { margin: 4px 0 0; }
+.daily-decor-tag { display: inline-block; color: #17665E; background: #E3F3EC; padding: 1px 5px; border-radius: 5px; font-size: 12px; font-weight: 800; }
+.invest-choice.vip { --policy-tint: #F3DDEA; --policy-ink: #6B2952; }
+.invest-choice.care { --policy-tint: #DFF3EF; --policy-ink: #175C55; }
 </style>
 </head>
 <body>
@@ -766,6 +773,10 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
       effect: 'Your restaurant starts the day with +1 popularity.', bonus: 1 },
     { id: 'fun_decor', name: 'Fun decorations', short: 'Fun decorations', cost: 2,
       effect: 'Your restaurant starts the day with +1 popularity.', bonus: 1 },
+    { id: 'window_plants', name: 'Window plants', short: 'Window plants', cost: 1, hardOnly: true },
+    { id: 'chalkboard', name: 'Chalkboard menu', short: 'Chalkboard menu', cost: 3, hardOnly: true },
+    { id: 'vip_setting', name: 'VIP table setting', short: 'VIP table setting', cost: 3, hardOnly: true },
+    { id: 'welcome_sign', name: 'Welcome sign', short: 'Welcome sign', cost: 3, hardOnly: true },
     { id: 'refund_fund', name: 'Refund fund', short: 'Refund fund', cost: 2,
       effect: 'Unlocks the robot action "Offer a refund".', unlocks: 'refund' }
   ];
@@ -1085,6 +1096,10 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     fun_decor: '<path d="M12 2.8a5.2 5.2 0 0 1 5.2 5.3c0 3.4-2.7 6.5-5.2 7.1-2.5-.6-5.2-3.7-5.2-7.1A5.2 5.2 0 0 1 12 2.8z"/><path d="M12 15.2l-1.1 1.6h2.2zM12 16.8c-1.2 1.5 1.2 2.6 0 4.6"/>',
     refund_fund: '<path d="M7 6.5h10v1.8c1.5 1 2.2 2.5 2.2 4.2v6a3 3 0 0 1-3 3H7.8a3 3 0 0 1-3-3v-6c0-1.7.7-3.2 2.2-4.2z"/><path d="M6.5 3.8h11"/><circle cx="12" cy="14.6" r="3"/>',
     tap_water: '<path d="M6 5h12l-1.7 15H7.7z"/><path d="M7 11q2-1.5 5 0t5 0"/>',
+    window_plants: '<path d="M6 14h12l-2 7H8zM12 14V4m0 6q-7 0-7-6 7 0 7 6m0 2q7 0 7-6-7 0-7 6"/>',
+    chalkboard: '<rect x="4" y="4" width="16" height="13" rx="2"/><path d="M7 21l2-4m8 4-2-4M8 8h8m-8 4h6"/>',
+    vip_setting: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M21 7v10M3 7v10"/>',
+    welcome_sign: '<rect x="4" y="7" width="16" height="10" rx="2"/><path d="M8 7l4-4 4 4m-7 5h6"/>',
     pasta: '<ellipse cx="12" cy="13" rx="9" ry="6"/><path d="M7.5 12q2-3 4.5 0t4.5 0m-8 3q2-2 4 0t3 0"/><path d="M10 5q-1-1 0-2m4 2q-1-1 0-2"/>',
     robot: '<rect x="5" y="7" width="14" height="11" rx="3"/><path d="M12 7V4"/><circle cx="12" cy="3.2" r="1.2" class="fill-cur"/><path d="M9.3 12h.01M14.7 12h.01" class="dot"/><path d="M9.5 15h5"/>'
   };
@@ -1215,6 +1230,10 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     var booth = has(sel, 'comfort_booth');
     out.push(table(640, booth, opts.diner));
     if (booth) out.push('<g class="up up-comfort_booth' + fr('comfort_booth') + '"></g>');
+    if (has(sel, 'chalkboard')) out.push('<g class="up' + fr('chalkboard') + '"><rect x="353" y="151" width="136" height="39" rx="6" fill="#275D51" stroke="#9B633B" stroke-width="5"/><text x="421" y="176" text-anchor="middle" class="sc-menu">TODAY’S SPECIAL</text></g>');
+    if (has(sel, 'welcome_sign')) out.push('<g class="up' + fr('welcome_sign') + '"><rect x="527" y="178" width="107" height="36" rx="7" fill="#FFD46D" stroke="#7A5A3E" stroke-width="3"/><text x="580" y="202" text-anchor="middle" fill="#51304B" font-size="16" font-weight="800">WELCOME</text></g>');
+    if (has(sel, 'window_plants')) out.push('<g class="up' + fr('window_plants') + '"><path d="M730 159h25l-4 14h-17z" fill="#BB663F"/><path d="M742 159v-28m0 15q-18-1-17-15 15 0 17 15m0 4q18-3 17-17-13 1-17 17" stroke="#39704B" stroke-width="4" fill="#84BE6B"/></g>');
+    if (has(sel, 'vip_setting')) out.push('<g class="up' + fr('vip_setting') + '"><path d="M665 317h44l-5 10h-43z" fill="#7955AC"/><ellipse cx="686" cy="320" rx="15" ry="4.5" fill="#FFFDF8" stroke="#DCA941" stroke-width="2"/></g>');
 
     // robot
     if (opts.robot !== false) {
@@ -1365,13 +1384,48 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
 
   var CHALLENGE_BUDGET = 12;
   var CHALLENGE_POPULARITY_PER_REQUEST = .5;
-  var CHALLENGE_POPULARITY_PER_UPGRADE = .5;
-  var CHALLENGE_GUEST_UPGRADES = ['comfort_booth', 'fun_decor'];
+  var CHALLENGE_DECOR = {
+    comfort_booth: { bonus: .5, audience: 'all' },
+    fun_decor: { bonus: .5, audience: 'all' },
+    window_plants: { bonus: .5, audience: 'regular' },
+    chalkboard: { bonus: 1, audience: 'regular' },
+    vip_setting: { bonus: 1.5, audience: 'vip' },
+    welcome_sign: { bonus: 1, audience: 'all' }
+  };
   var POLICIES = [
-    { id: 'growth', name: 'Growth Fund', price: 5, bonus: 30, protection: 0, icon: 'star', detail: 'Earn 30% more coins from each guest you fully help.' },
-    { id: 'steady', name: 'Steady Saver', price: 3, bonus: 15, protection: 0, icon: 'coin', detail: 'Earn 15% more coins from each guest you fully help.' },
-    { id: 'safety', name: 'Safety Net', price: 4, bonus: 0, protection: .5, icon: 'refund', detail: 'Lose 0.5 fewer coins each time service falls short.' }
+    { id: 'growth', name: 'Growth Fund', price: 2, bonus: 30, icon: 'star', badge: '+30% income', detail: 'Earn 30% more coins from each guest you fully help today.' },
+    { id: 'steady', name: 'Steady Saver', price: 1, bonus: 15, icon: 'coin', badge: '+15% income', detail: 'Spend less upfront and earn 15% more coins from each guest you fully help today.' },
+    { id: 'safety', name: 'Safety Net', price: 2, protection: 1, icon: 'refund', badge: 'Save 1 coin per miss', detail: 'Lose 1 fewer coin each time service falls short today.' },
+    { id: 'vip', name: 'VIP Club', price: 2, vipBonus: 60, icon: 'vip_setting', badge: '+60% VIP income', detail: 'Earn 60% more coins from VIPs you fully help today.' },
+    { id: 'care', name: 'Guest Care', price: 2, popularityBonus: .5, icon: 'comfort_booth', badge: '+0.5 popularity', detail: 'Gain 0.5 extra popularity for each guest you fully help today.' }
   ];
+  var LOAN_CASH = 4;
+  var LOAN_PAYBACK = 5;
+
+  function dailyPolicies(h) {
+    var offset = (h.day - 1) * 2;
+    return [0, 1, 2].map(function (n) { return h.policyDeck[(offset + n) % h.policyDeck.length]; });
+  }
+
+  function shopDecor(h) {
+    return h.decorDeck.slice((h.day - 1) * 2, h.day * 2);
+  }
+
+  function shopUpgrades(h) {
+    if (!h) return RR.UPGRADES.filter(function (item) { return !item.hardOnly; });
+    var decor = shopDecor(h);
+    var installed = S.selected.filter(function (id) { return CHALLENGE_DECOR[id] && decor.indexOf(id) === -1; });
+    return RR.UPGRADES.filter(function (item) { return !CHALLENGE_DECOR[item.id]; })
+      .concat(decor.concat(installed).map(function (id) { return RR.UPGRADE[id]; }));
+  }
+
+  function decorBonus(selected, vip) {
+    var audience = vip ? 'vip' : 'regular';
+    return selected.reduce(function (total, id) {
+      var item = CHALLENGE_DECOR[id];
+      return total + (item && (item.audience === 'all' || item.audience === audience) ? item.bonus : 0);
+    }, 0);
+  }
 
   function coinAmount(amount) { return Math.round(amount * 100) / 100; }
 
@@ -1417,10 +1471,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
 
   function challengeDay(hard, rules, selected, fromGuest) {
     var coins = hard.coins, popularity = hard.popularity, log = [];
-    var guestBonus = CHALLENGE_GUEST_UPGRADES.filter(function (id) {
-      return selected.indexOf(id) !== -1;
-    }).length * CHALLENGE_POPULARITY_PER_UPGRADE;
-    var policy = hard.policy || { bonus: 0, protection: 0 };
+    var policy = hard.policy || {};
     hard.guests.slice(fromGuest || 0).some(function (guest) {
       var checks = guest.needs.map(function (condition) {
         var check = RR.evaluateEvent(condition, rules, selected, popularity);
@@ -1433,9 +1484,10 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
       var partial = !guest.vip && checks[0].outcome === 'partial';
       var neutral = basic || partial;
       var factor = guest.vip ? 2 : 1;
-      var cashChange = helped ? coinAmount(guest.pay * factor * (1 + policy.bonus / 100))
-        : neutral ? 0 : -Math.max(0, guest.cost * factor - policy.protection);
-      var popularityBonus = helped ? guestBonus : 0;
+      var incomeBonus = (policy.bonus || 0) + (guest.vip ? policy.vipBonus || 0 : 0);
+      var cashChange = helped ? coinAmount(guest.pay * factor * (1 + incomeBonus / 100))
+        : neutral ? 0 : -Math.max(0, guest.cost * factor - (policy.protection || 0));
+      var popularityBonus = helped ? decorBonus(selected, guest.vip) + (policy.popularityBonus || 0) : 0;
       var popChange = helped ? CHALLENGE_POPULARITY_PER_REQUEST * guest.needs.length + popularityBonus
         : neutral ? 0 : -guest.loss * factor;
       var nextCoins = Math.max(0, coinAmount(coins + cashChange));
@@ -1460,22 +1512,51 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     var h = S.hard;
     return '<section class="challenge-investments" aria-labelledby="invest-title"><div class="invest-header"><div>' +
       '<h2 id="invest-title">Invest in your restaurant</h2>' +
-      '<p>Pick one policy for the rest of the game, or save your coins.</p></div>' +
+      '<p>Choose one investment for today, or save your coins. Three offers rotate each day.</p></div>' +
       '<span class="coins">' + I('coin') + h.coins + ' coins left</span></div><div class="invest-list">' +
-      POLICIES.map(function (policy) {
+      dailyPolicies(h).map(function (policy) {
         var selected = h.policy === policy;
         var affordable = canSpendChallenge(policy.price);
-        var benefit = policy.bonus ? '+' + policy.bonus + '% income' : '−' + policy.protection + ' coin loss';
         var label = h.policy ? 'Locked' : affordable ? 'Invest' : 'Insufficient coins';
         return '<article class="invest-choice ' + policy.id + (selected ? ' active' : '') + '">' +
-          '<div class="invest-card-top"><span class="invest-benefit">' + benefit + '</span>' + I(policy.icon) + '</div>' +
+          '<div class="invest-card-top"><span class="invest-benefit">' + policy.badge + '</span>' + I(policy.icon) + '</div>' +
           '<h3>' + policy.name + '</h3><p>' + policy.detail + '</p><div class="invest-card-footer">' +
           '<span class="invest-price">' + I('coin') + policy.price + ' coins</span>' +
           (selected ? '<span class="invest-active" data-k="policy-' + policy.id + '" tabindex="-1">' + I('check') + 'Active</span>' :
             '<button class="btn btn-small btn-quiet" data-act="invest" data-id="' + policy.id + '" data-k="policy-' + policy.id + '"' +
             ' aria-label="' + label + ' · ' + policy.name + ', ' + policy.price + ' coins"' +
             (h.policy || !affordable ? ' disabled' : '') + '>' + label + '</button>') + '</div></article>';
-      }).join('') + '</div></section>';
+      }).join('') + '</div></section>' + loanCard(h);
+  }
+
+  function loanCard(h) {
+    if (!h.loan && h.day === 3) return '';
+    var loan = h.loan;
+    var copy = loan ? loan.balance ?
+      '<b>' + loan.balance + ' coins due.</b> ' + (h.day < loan.dueDay ? 'Repayment starts after Day ' + loan.dueDay + '.' :
+        'We’ll take what you can pay after today’s shift.') : 'Your loan is paid in full.' :
+      'Get ' + LOAN_CASH + ' coins now. Repay ' + LOAN_PAYBACK + ' after Day ' + (h.day + 1) + '. One loan per run.';
+    return '<section class="challenge-loan" aria-labelledby="loan-title"><div><h2 id="loan-title">Short-term loan</h2><p>' + copy + '</p></div>' +
+      (loan ? '' : '<button class="btn btn-quiet btn-small" data-act="borrow">Borrow ' + LOAN_CASH + ' coins</button>') + '</section>';
+  }
+
+  function settleLoan(closing) {
+    var h = S.hard, loan = h.loan;
+    if (!loan || !loan.balance || (!closing && h.day < loan.dueDay)) return;
+    var paid = Math.min(h.coins, loan.balance);
+    h.coins = coinAmount(h.coins - paid);
+    loan.balance = coinAmount(loan.balance - paid);
+    loan.payment = { day: h.day, paid: paid };
+  }
+
+  function loanReceipt(h) {
+    var loan = h.loan;
+    if (!loan) return '';
+    var payment = loan.payment;
+    if (!payment || payment.day !== h.day) return loan.balance ?
+      '<p><b>Loan:</b> ' + loan.balance + ' coins due after Day ' + loan.dueDay + '.</p>' : '';
+    return '<p><b>Loan repayment:</b> ' + payment.paid + ' coins paid. ' +
+      (loan.balance ? loan.balance + ' coins still unpaid.' : 'Paid in full.') + '</p>';
   }
 
   function challengeRules() {
@@ -1485,9 +1566,9 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     return '<div class="modal challenge-rules" role="dialog" aria-modal="true" aria-labelledby="m-h">' +
       '<h2 id="m-h" tabindex="-1">Chef’s Challenge rules</h2><div class="challenge-rule-grid">' +
       '<section><h3>Survive 3 days</h3><p>Start with <b>' + CHALLENGE_BUDGET + ' coins</b> and <b>5 popularity</b>. Each day has four guests. Your rules are saved between days. You can edit them and buy upgrades before the next shift. Your restaurant closes only if <b>popularity reaches zero</b>. If you run out of coins, you can keep serving guests and earn them back.</p></section>' +
-      '<section><h3>Earn and invest</h3><p>Earn coins and <b>+0.5 popularity per request</b> when you fully help a guest. Comfy Booths and Fun Decorations each add <b>+0.5 per fully helped guest</b>. Miss a request and lose coins and popularity.</p>' +
+      '<section><h3>Earn and invest</h3><p>Earn coins and <b>+0.5 popularity per request</b> when you fully help a guest. Decorations can boost popularity when you fully help guests. Miss a request and lose coins and popularity.</p>' +
       '<p>Tap water is free to serve and earns no coins. The drink station earns the regular payout and popularity.</p>' +
-      '<p>Pick one policy or save your coins. <b>Growth Fund</b> adds 30% income for 5 coins. <b>Steady Saver</b> adds 15% for 3. <b>Safety Net</b> reduces losses for 4.</p></section>' +
+      '<p>Investments and decor rotate daily. Choose up to one investment for each day. You can also borrow <b>4 coins</b> once and repay <b>5 coins</b> after the following shift.</p></section>' +
       '<section><h3>Look for VIP guests</h3><div class="vip-portraits" role="img" aria-label="Two VIP guests in suits carrying briefcases">' + portraits +
       '</div><p>VIPs bring <b>two requests</b>. Fully serve both for <b>2× coins</b> and <b>+1 base popularity</b>. Tap water counts as basic service. An apology alone leaves a request unresolved. Miss either and lose <b>2× the coins and popularity</b>.</p></section></div>' +
       '<label class="nickname">Leaderboard nickname (optional)<input name="nickname" maxlength="18" placeholder="e.g. PizzaPilot" autocomplete="off" spellcheck="false">' +
@@ -1534,7 +1615,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
       (revealed ? '<div class="result challenge-guest-result ' + outcomeClass + '"><h3>' + outcomeTitle + '</h3>' +
         (outcomeNote ? '<p>' + outcomeNote + '</p>' : '') +
         '<p>Coins ' + e.coinsBefore + ' → ' + e.coinsAfter + '<br>Popularity ' + e.scoreBefore + ' → ' + e.scoreAfter + '</p>' +
-        (e.popularityBonus ? '<p><b>+' + e.popularityBonus + ' popularity from restaurant upgrades</b></p>' : '') + '</div>' : '') +
+        (e.popularityBonus ? '<p><b>+' + e.popularityBonus + ' popularity from decor or investment</b></p>' : '') + '</div>' : '') +
       '<button class="btn btn-go" data-act="next" data-k="next"' + (walking ? ' aria-disabled="true"' : '') + '>' +
       (walking ? 'Guest arriving…' : !revealed ? 'Show what happens' : last ? 'See day results' : 'Next guest') + I('right') + '</button></div></div></main>';
   }
@@ -1553,7 +1634,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     return topbar() + '<main class="screen"><div class="screen-head"><div><h1 tabindex="-1" data-focus>' + title + '</h1>' + reason + '</div>' +
       challengeStatus(h.coins, h.popularity) + '</div><section class="receipt"><h2>Restaurant receipt</h2>' +
       '<p>Days completed: <b>' + h.completed + ' of 3</b></p>' +
-      (final ? '<p class="rank-score">Final score: ' + challengeScore({ days: h.completed, coins: h.coins, popularity: h.popularity }) + ' points</p>' : '') + deliveryReceipt + '<ol class="rlog">' + log + '</ol></section>' +
+      (final ? '<p class="rank-score">Final score: ' + challengeScore({ days: h.completed, coins: h.coins, popularity: h.popularity }) + ' points</p>' : '') + deliveryReceipt + loanReceipt(h) + '<ol class="rlog">' + log + '</ol></section>' +
       '<div class="bottombar">' + (final
         ? '<button class="btn btn-quiet btn-small" data-act="board">Leaderboard</button>' +
           (h.nickname ? '<button class="btn btn-plum btn-small" data-act="save-score">Save score as ' + esc(h.nickname) + '</button>' : '') +
@@ -1646,7 +1727,8 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
 
   function beginChallenge(nickname) {
     S.hard = { nickname: nickname, day: 1, completed: 0, coins: CHALLENGE_BUDGET, popularity: RR.BASE_POPULARITY,
-      policy: null, status: 'playing', guests: challengeGuests(1),
+      policy: null, loan: null, status: 'playing', guests: challengeGuests(1),
+      policyDeck: shuffle(POLICIES.slice()), decorDeck: shuffle(Object.keys(CHALLENGE_DECOR)),
       deliveryDay: 1 + Math.floor(Math.random() * 3), deliveryAfterGuest: 1 + Math.floor(Math.random() * 3) };
     go('budget');
   }
@@ -1676,6 +1758,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
   }
 
   function showChallengeLoss() {
+    settleLoan(true);
     S.hard.status = 'lost';
     go('results', { type: 'challenge-loss' });
   }
@@ -1685,6 +1768,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     h.coins = S.day.coins;
     h.popularity = S.day.popularity;
     if (h.popularity === 0) return showChallengeLoss();
+    settleLoan(false);
     h.completed = h.day;
     if (h.day === 3) h.status = 'won';
     go('results');
@@ -1890,11 +1974,13 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
     var hard = S.hard;
     var reuseRules = hard && hard.day > 1;
     var left = hard ? hard.coins : RR.coinsLeft(S.selected);
-    var items = RR.UPGRADES.map(function (u) {
+    var items = shopUpgrades(hard).map(function (u) {
       var owned = S.selected.indexOf(u.id) !== -1;
       var can = hard ? { ok: canSpendChallenge(u.cost) } : RR.canBuy(S.selected, u.id);
-      var effect = hard && CHALLENGE_GUEST_UPGRADES.indexOf(u.id) !== -1
-        ? 'Gain +' + CHALLENGE_POPULARITY_PER_UPGRADE + ' popularity per guest you fully help.' : u.effect;
+      var decoration = hard && CHALLENGE_DECOR[u.id];
+      var audience = decoration && (decoration.audience === 'all' ? 'guest' : decoration.audience + ' guest');
+      var effect = decoration ?
+        'Gain +' + decoration.bonus + ' popularity per ' + audience + ' you fully help.' : u.effect;
       var btn;
       if (owned && hard) btn = '<span class="badge-owned">' + I('check') + 'Installed</span>';
       else if (owned) btn = '<button class="buy remove" data-act="sell" data-id="' + u.id + '" data-k="b-' + u.id + '" aria-label="Remove ' + esc(u.name) + ' and get ' + u.cost + ' coins back">' + I('x') + 'Remove (get ' + u.cost + ' back)</button>';
@@ -1904,7 +1990,7 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
       return '<li class="item' + (owned ? ' owned' : '') + '">' +
         '<span class="art">' + I(u.id) + '</span>' +
         '<h3>' + esc(u.name) + '<span class="price">' + u.cost + I('coin') + '</span></h3>' +
-        '<p>' + esc(effect) + (owned ? ' <span class="badge-owned">' + I('check') + 'Bought</span>' : '') + '</p>' +
+        '<p>' + (decoration && !owned ? '<span class="daily-decor-tag">Today’s decor</span> ' : '') + esc(effect) + (owned ? ' <span class="badge-owned">' + I('check') + 'Bought</span>' : '') + '</p>' +
         '<div class="act">' + btn + '</div></li>';
     }).join('');
     var bought = S.selected.length
@@ -2303,12 +2389,21 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
       case 'challenge': beep('tap'); S.modal = { type: 'challenge', returnK: 'challenge' }; return render();
       case 'start-challenge': return startChallenge();
       case 'invest':
-        var policy = POLICIES.find(function (item) { return item.id === id; });
+        if (!S.hard || S.screen !== 'budget') return;
+        var policy = dailyPolicies(S.hard).find(function (item) { return item.id === id; });
         if (!policy || S.hard.policy || !canSpendChallenge(policy.price)) return;
         S.hard.policy = policy;
         return spendChallenge(policy.price);
+      case 'borrow':
+        if (!S.hard || S.screen !== 'budget' || S.hard.loan || S.hard.day >= 3) return;
+        S.hard.loan = { balance: LOAN_PAYBACK, dueDay: S.hard.day + 1 };
+        S.hard.coins = coinAmount(S.hard.coins + LOAN_CASH);
+        beep('coin');
+        announce('Received ' + LOAN_CASH + ' coins. Repay ' + LOAN_PAYBACK + ' after Day ' + S.hard.loan.dueDay + '.');
+        return render();
       case 'next-day':
         S.hard.day++;
+        S.hard.policy = null;
         S.hard.guests = challengeGuests(S.hard.day);
         S.day = null;
         return go('budget');
@@ -2326,11 +2421,13 @@ button[data-act="next"][aria-disabled="true"] { opacity: .65; cursor: default; }
       case 'hardreset': return reset();
       case 'buy':
         if (S.hard) {
-          if (S.selected.indexOf(id) !== -1 || !canSpendChallenge(RR.UPGRADE[id].cost)) return;
+          if (S.screen !== 'budget' || !shopUpgrades(S.hard).some(function (item) { return item.id === id; }) ||
+              S.selected.indexOf(id) !== -1 || !canSpendChallenge(RR.UPGRADE[id].cost)) return;
           S.selected.push(id); lastBought = id; beep('coin');
           announce('Bought ' + RR.UPGRADE[id].name + '.');
           return spendChallenge(RR.UPGRADE[id].cost);
         }
+        if (!RR.UPGRADE[id] || RR.UPGRADE[id].hardOnly) return;
         S.selected = RR.buy(S.selected, id); lastBought = id; beep('coin');
         announce('Bought ' + RR.UPGRADE[id].name + '. ' + RR.coinsLeft(S.selected) + ' coins left.'); return render();
       case 'sell':
