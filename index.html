@@ -659,8 +659,21 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 @media (prefers-reduced-motion: reduce) { .delivery-pip { transition: none; } }
 
 /* Chef’s Challenge economy and route controls */
-.challenge-forecast { padding: 10px 13px; border: 1px solid #ADCEC3; border-radius: 10px; background: #E3F3EC; color: #174F46; }
-.challenge-forecast b { display: block; }
+.shop > .challenge-forecast {
+  padding: 12px 14px;
+  border: 1px solid #ADCEC3;
+  border-radius: 10px;
+  background: #E3F3EC;
+  color: #153D36;
+  font: 600 16px/1.45 var(--body);
+}
+.challenge-forecast b {
+  display: block;
+  margin-bottom: 4px;
+  color: #12342E;
+  font-size: 17px;
+  font-weight: 800;
+}
 .delivery-panel { border-color: #D9CEE8; box-shadow: 0 8px 0 #E8DFF2; }
 .delivery-clock { background: linear-gradient(110deg, #35245C, #5B3BA6); }
 .delivery-clock.urgent { background: linear-gradient(110deg, #851B34, #B52D45); }
