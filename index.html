@@ -413,7 +413,6 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 .matched .rule-line { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .matched.none .rule-line { font: 800 19px/1.2 var(--display); }
 .result { border-radius: 14px; padding: 12px 14px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; align-items: center; }
-.delta-label { display: block; font: 700 13px/1.4 var(--body); margin-top: 4px; }
 .result .delta { font: 800 38px/1 var(--display); grid-row: span 2; min-width: 64px; text-align: center; }
 .result h3 { font-size: 22px; }
 .result p { margin: 0; font-size: 16px; }
@@ -612,23 +611,17 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 
   var UPGRADES = [
     { id: 'warming_station', name: 'Food warming station', short: 'Warming station', cost: 3,
-      effect: 'Unlocks the robot action "Warm the meal".', unlocks: 'warm', starterCoins: 1,
-      starterEffect: 'Unlock Warm the meal. Earn +1 extra coin when warming helps a customer.' },
+      effect: 'Unlocks the robot action "Warm the meal".', unlocks: 'warm' },
     { id: 'replacement_ingredients', name: 'Extra ingredients', short: 'Extra ingredients', cost: 3,
-      effect: 'Unlocks the robot action "Remake the meal".', unlocks: 'remake', starterPopularity: .5,
-      starterEffect: 'Unlock Remake the meal. Gain +0.5 extra popularity when a remake helps a customer.' },
+      effect: 'Unlocks the robot action "Remake the meal".', unlocks: 'remake' },
     { id: 'drink_station', name: 'Drink station', short: 'Drink station', cost: 2,
-      effect: 'Unlocks the robot action "Bring a drink".', unlocks: 'drink', starterCoins: 1,
-      starterEffect: 'Unlock Bring a drink. Earn +1 extra coin when a drink helps a customer.' },
+      effect: 'Unlocks the robot action "Bring a drink".', unlocks: 'drink' },
     { id: 'comfort_booth', name: 'Comfy booths', short: 'Comfy booths', cost: 2,
-      effect: 'Your restaurant starts the day with +1 popularity.', bonus: 1, starterPopularity: .5,
-      starterEffect: 'Gain +0.5 extra popularity for every customer you help.' },
+      effect: 'Your restaurant starts the day with +1 popularity.', bonus: 1 },
     { id: 'fun_decor', name: 'Fun decorations', short: 'Fun decorations', cost: 2,
-      effect: 'Your restaurant starts the day with +1 popularity.', bonus: 1, starterCoins: 1,
-      starterEffect: 'Earn +1 extra coin from every customer you help, except refunds.' },
+      effect: 'Your restaurant starts the day with +1 popularity.', bonus: 1 },
     { id: 'refund_fund', name: 'Refund fund', short: 'Refund fund', cost: 2,
-      effect: 'Unlocks the robot action "Offer a refund".', unlocks: 'refund', starterPopularity: 1,
-      starterEffect: 'Unlock Offer a refund. A helpful refund earns +2 popularity in total and no coins.' }
+      effect: 'Unlocks the robot action "Offer a refund".', unlocks: 'refund' }
   ];
 
   var CONDITIONS = [
@@ -714,7 +707,9 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
   }
 
   function startingPopularity(selected) {
-    return BASE_POPULARITY;
+    var p = BASE_POPULARITY;
+    for (var i = 0; i < selected.length; i++) p += UPGRADE[selected[i]].bonus || 0;
+    return p;
   }
 
   function actionAvailable(actionId, selected) {
@@ -756,40 +751,15 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 
   function simulateDay(rules, selected, day) {
     day = day || DEFAULT_DAY;
-    var score = BASE_POPULARITY;
+    var score = startingPopularity(selected);
     var start = score;
-    var coins = coinsLeft(selected);
-    var saved = coins;
     var log = [];
     for (var i = 0; i < day.length; i++) {
       var r = evaluateEvent(day[i], rules, selected, score);
-      r.coinsBefore = coins;
-      r.coinChange = 0;
-      r.bonusCoins = 0;
-      r.bonusPopularity = 0;
-      r.bonuses = [];
-      if (r.outcome === 'helpful') {
-        r.coinChange = r.action === 'refund' ? 0 : 2;
-        selected.forEach(function (id) {
-          var u = UPGRADE[id];
-          if (u.unlocks && u.unlocks !== r.action) return;
-          var cash = r.action === 'refund' ? 0 : u.starterCoins || 0;
-          var pop = u.starterPopularity || 0;
-          r.bonusCoins += cash;
-          r.bonusPopularity += pop;
-          if (cash || pop) r.bonuses.push(u.short + ' gives ' +
-            (cash ? '+' + cash + ' coin' + (cash === 1 ? '' : 's') : '+' + pop + ' popularity'));
-        });
-        r.coinChange += r.bonusCoins;
-        r.requestedDelta += r.bonusPopularity;
-        r.scoreAfter = score + r.requestedDelta;
-      }
-      coins += r.coinChange;
-      r.coinsAfter = coins;
       log.push(r);
       score = r.scoreAfter;
     }
-    return { start: start, final: score, log: log, saved: saved, earned: coins - saved, coins: coins };
+    return { start: start, final: score, log: log };
   }
 
   /* Inline notes for each rule slot, derived from state. */
@@ -1523,7 +1493,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
         '<h2 id="mode-heading">Which difficulty would you like to play?</h2>' +
         '<div class="mode-options">' +
         '<button type="button" class="mode-card" data-act="play" data-k="play">' + I('play') +
-        '<span><span class="mode-name">Starter Shift</span><span class="mode-detail">Ages 5–8 · Earn coins and popularity</span></span>' + I('right') + '</button>' +
+        '<span><span class="mode-name">Starter Shift</span><span class="mode-detail">Learn the ropes</span></span>' + I('right') + '</button>' +
         '<button type="button" class="mode-card challenge" data-act="challenge" data-k="challenge">' + I('star') +
         '<span><span class="mode-name">Chef’s Challenge</span><span class="mode-detail">Survive three days</span></span>' + I('right') + '</button>' +
         '</div></section>';
@@ -1542,7 +1512,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       var owned = S.selected.indexOf(u.id) !== -1;
       var can = hard ? { ok: canSpendChallenge(u.cost) } : RR.canBuy(S.selected, u.id);
       var effect = hard && CHALLENGE_GUEST_UPGRADES.indexOf(u.id) !== -1
-        ? 'Gain +' + CHALLENGE_POPULARITY_PER_UPGRADE + ' popularity per guest you fully help.' : hard ? u.effect : u.starterEffect;
+        ? 'Gain +' + CHALLENGE_POPULARITY_PER_UPGRADE + ' popularity per guest you fully help.' : u.effect;
       var btn;
       if (owned && hard) btn = '<span class="badge-owned">' + I('check') + 'Installed</span>';
       else if (owned) btn = '<button class="buy remove" data-act="sell" data-id="' + u.id + '" data-k="b-' + u.id + '" aria-label="Remove ' + esc(u.name) + ' and get ' + u.cost + ' coins back">' + I('x') + 'Remove (get ' + u.cost + ' back)</button>';
@@ -1560,7 +1530,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       : 'nothing yet';
     return topbar() + '<main class="screen">' +
       '<div class="screen-head"><div><h1 tabindex="-1" data-focus>Build your restaurant</h1>' +
-      '<p>' + (hard ? 'Keep some coins for service. The shop won’t let you spend your last coins. Your upgrades and coins carry forward.' : 'Your goal is to finish with as many coins and as much popularity as you can. Spend up to 10 coins on upgrades, then program Pip to help the customers.') + '</p></div>' +
+      '<p>' + (hard ? 'Keep some coins for service. The shop won’t let you spend your last coins. Your upgrades and coins carry forward.' : 'You have 10 coins. You can’t buy everything, so pick what matters most. Coins you don’t spend are saved.') + '</p></div>' +
       (hard ? challengeStatus(left, hard.popularity) : '') + '</div>' +
       '<div class="budget-grid"><section aria-label="Your restaurant">' +
       '<div class="purse"><div><div class="lbl">Coins left</div><div class="big" aria-live="polite">' + left + (hard ? '' : ' <span class="sr">of 10 coins left</span>') + '</div></div>' + (hard ? '' : coinDots(left)) + '</div>' +
@@ -1568,7 +1538,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       '<p class="starter"><b>Free to start:</b> a basic kitchen, tables, and one robot waiter. <b>Bought:</b> ' + esc(bought) + '.</p>' +
       '</section>' +
       '<section class="shop" aria-labelledby="shop-h"><h2 id="shop-h">Upgrade shop</h2>' +
-      '<p>' + (hard ? 'Some upgrades unlock robot actions. Choose what matters most!' : 'A helpful response earns 2 coins and +1 popularity. Upgrades add the bonuses below. Refunds earn popularity only. Missed requests earn no coins and lose 1 popularity.') + '</p>' +
+      '<p>Some upgrades unlock robot actions. Choose what matters most!</p>' +
       '<ul class="shop-list">' + items + '</ul></section></div>' + (hard ? investments() : '') +
       '<div class="bottombar"><span class="coins">' + I('coin') + left + ' coin' + (left === 1 ? '' : 's') + ' left</span>' +
       '<button class="btn btn-go" data-act="go-code" data-k="go-code">Train my robot' + I('right') + '</button></div>' +
@@ -1701,7 +1671,6 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       : '<div class="matched none"><div class="lbl">Rule check</div><div class="rule-line">No matching rule yet</div></div>';
     var clamped = e.scoreBefore + e.requestedDelta !== e.scoreAfter;
     var shownScore = S.phase >= 3 ? e.scoreAfter : e.scoreBefore;
-    var shownCoins = S.phase >= 3 ? e.coinsAfter : e.coinsBefore;
     var dots = S.day.log.map(function (x, i) {
       var cls = i < S.eventIndex || (i === S.eventIndex && S.phase >= 3) ? (x.outcome === 'helpful' ? 'good' : 'bad') : (i === S.eventIndex ? 'on' : '');
       return '<i class="' + cls + '"></i>';
@@ -1722,12 +1691,10 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       '<div class="bubble cust"><span class="who">Customer</span>“' + esc(c.says) + '”</div>' +
       '<div class="bubble bot p2"><span class="who">Pip the robot</span>“' + esc(robotLine) + '”</div></div>' +
       '<div class="panel">' +
-      '<div class="meter"><span class="lbl">Coins</span><span class="num">' + shownCoins + '</span>' + I('coin') + '</div>' +
       '<div class="meter"><span class="lbl">Popularity</span><span class="num" id="score">' + shownScore + '</span>' + stars(shownScore) + '</div>' +
       '<div class="p1">' + matched + '</div>' +
-      '<div class="p3 result ' + (good ? 'good' : 'bad') + '"><span class="delta">' + (e.requestedDelta > 0 ? '+' : '−') + Math.abs(e.requestedDelta) + '<small class="delta-label">popularity</small></span><h3>' + esc(title) + '</h3><p>' + esc(body) + '</p></div>' +
-      '<div class="p3 scoreline">+' + e.coinChange + ' coins earned' + (e.action === 'refund' && good ? ' (refund)' : '') +
-      (e.bonuses.length ? '<br>' + e.bonuses.map(esc).join('<br>') : '') + '<br>Popularity ' + e.scoreBefore + ' → ' + e.scoreAfter + (clamped ? ' (it can’t go below 0)' : '') + '</div>' +
+      '<div class="p3 result ' + (good ? 'good' : 'bad') + '"><span class="delta">' + (good ? '+1' : '−1') + '</span><h3>' + esc(title) + '</h3><p>' + esc(body) + '</p></div>' +
+      '<div class="p3 scoreline">Popularity ' + e.scoreBefore + ' → ' + e.scoreAfter + (clamped ? ' (it can’t go below 0)' : '') + '</div>' +
       '<div class="sim-controls">' +
       '<button class="btn btn-go" data-act="next" data-k="next">' + (S.phase < 3 ? 'Show what happens' : last ? 'See results' : 'Next customer') + I('right') + '</button>' +
       '<button class="btn btn-quiet btn-small" data-act="auto" data-k="auto" aria-pressed="' + S.autoplay + '">' + I(S.autoplay ? 'pause' : 'play') + (S.autoplay ? 'Pause' : 'Auto play') + '</button>' +
@@ -1741,11 +1708,11 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     if (S.hard) return challengeResults();
     var sum = RR.summarize(S.day);
     var tips = RR.coaching(S.day.log, S.selected);
-    var left = S.day.coins;
+    var left = RR.coinsLeft(S.selected);
     var ups = S.selected.length ? S.selected.map(function (id) { return esc(RR.UPGRADE[id].short); }).join(', ') : 'None';
     var log = S.day.log.map(function (e, i) {
       var what = e.outcome === 'unhandled' ? 'No rule' : e.outcome === 'missing_upgrade' ? RR.ACTION[e.action].label + ' (needed upgrade)' : RR.ACTION[e.action].label;
-      return '<li><span class="n">' + (i + 1) + '</span><span>“' + esc(RR.CONDITION[e.condition].says) + '” → ' + esc(what) + '</span><span class="d ' + (e.outcome === 'helpful' ? 'good' : 'bad') + '">' + (e.requestedDelta > 0 ? '+' : '−') + Math.abs(e.requestedDelta) + ' popularity<br>+' + e.coinChange + ' coins</span></li>';
+      return '<li><span class="n">' + (i + 1) + '</span><span>“' + esc(RR.CONDITION[e.condition].says) + '” → ' + esc(what) + '</span><span class="d ' + (e.outcome === 'helpful' ? 'good' : 'bad') + '">' + (e.requestedDelta > 0 ? '+1' : '−1') + '</span></li>';
     }).join('');
     var ideas = tips.map(function (t, i) {
       var btn = t.fix.kind === 'shop'
@@ -1757,17 +1724,13 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
     return topbar() + '<main class="screen"><div class="results-grid">' +
       '<section class="receipt" aria-label="Day receipt"><div class="rhead"><small>ROBOT RESTAURANT · TODAY</small>' +
       '<div class="final" aria-hidden="true">' + sum.final + '</div>' +
-      '<h1 tabindex="-1" data-focus>You finished with ' + left + ' coins and ' + sum.final + ' popularity!</h1></div>' +
+      '<h1 tabindex="-1" data-focus>Your restaurant finished with ' + sum.final + ' popularity point' + (sum.final === 1 ? '' : 's') + '!</h1></div>' +
       '<div class="rline"><span>Started the day with</span><b>' + sum.start + '</b></div>' +
       '<div class="rline"><span>Points gained or lost</span><b>' + (ch > 0 ? '+' : ch < 0 ? '−' : '') + Math.abs(ch) + '</b></div>' +
       '<div class="rline"><span>Helpful responses</span><b>' + sum.helpful + ' of ' + sum.total + '</b></div>' +
       '<div class="rline"><span>Customers with no rule</span><b>' + sum.unhandled + '</b></div>' +
       (sum.unhelpful + sum.missingUpgrade ? '<div class="rline"><span>Rules that didn’t help</span><b>' + (sum.unhelpful + sum.missingUpgrade) + '</b></div>' : '') +
-      '<div class="rline"><span>Starting budget</span><b>' + RR.BUDGET + '</b></div>' +
-      '<div class="rline"><span>Spent on upgrades</span><b>−' + RR.spent(S.selected) + '</b></div>' +
-      '<div class="rline"><span>Saved after shopping</span><b>' + S.day.saved + '</b></div>' +
-      '<div class="rline"><span>Earned from customers</span><b>+' + S.day.earned + '</b></div>' +
-      '<div class="rline"><span>Final coins</span><b>' + left + '</b></div>' +
+      '<div class="rline"><span>Coins saved</span><b>' + left + '</b></div>' +
       '<div class="rline"><span>Upgrades</span><b style="font-size:16px;text-align:right">' + ups + '</b></div>' +
       '<ul class="rlog" aria-label="What happened">' + log + '</ul></section>' +
       '<section class="ideas" aria-labelledby="ideas-h"><h2 id="ideas-h">Ideas to try</h2>' + ideas +
@@ -1883,7 +1846,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
       beep(e.outcome === 'helpful' ? 'good' : 'bad');
       var c = RR.CONDITION[e.condition];
       announce('Customer ' + (S.eventIndex + 1) + ' said: ' + c.says + ' ' + (e.ruleId ? 'Rule ' + (e.ruleIndex + 1) + ' ran.' : 'No matching rule.') + ' ' +
-        (e.requestedDelta > 0 ? 'Plus ' : 'Minus ') + Math.abs(e.requestedDelta) + ' popularity. ' + e.coinChange + ' coins earned. You have ' + e.coinsAfter + ' coins and ' + e.scoreAfter + ' popularity.');
+        (e.requestedDelta > 0 ? 'Plus 1.' : 'Minus 1.') + ' Popularity is now ' + e.scoreAfter + '.');
     }
     render();
   }
