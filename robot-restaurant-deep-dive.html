@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#302040"><meta name="description" content="Practice Python and economics with Pip from Robot Restaurant.">
+<meta name="theme-color" content="#302040"><meta name="description" content="Read and practice Python and economics with Pip.">
 <title>Deep Dive with Pip | Robot Restaurant</title>
 <!--
 MIT License
@@ -587,106 +587,6 @@ body.dragging, body.dragging * { cursor: grabbing !important; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
-
-body.colab-visible #app { display:none; }
-body:not(.colab-visible) #colab { display:none; }
-.colab { --cc-ink:#291F38; --cc-purple:#5638A4; --cc-yellow:#F6C443; --cc-green:#D7EDC7; --cc-blue:#C8E8F3; max-width:1200px; margin:auto; padding:20px 24px 44px; color:var(--cc-ink); }
-.colab button { font:700 19px/1.2 var(--body); cursor:pointer; color:inherit; min-height:52px; border:2px solid #D1C4BA; border-radius:15px; background:#FFFCF6; padding:12px 18px; touch-action:manipulation; }
-.colab button:focus-visible, .colab summary:focus-visible { outline:4px solid #9469DB; outline-offset:4px; }
-.colab button:disabled { cursor:default; opacity:.5; }
-.colab .cc-primary { background:var(--cc-purple); border-color:var(--cc-purple); color:white; box-shadow:0 5px 0 #352266; }
-.cc-nav { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:25px; flex-wrap:wrap; }
-.cc-brand { font:800 23px var(--display); display:flex; align-items:center; gap:8px; }
-.cc-brand .ico { color:var(--cc-purple); }
-.colab h1 { font:800 clamp(36px,5.5vw,64px)/1.05 var(--display); margin:0 0 18px; letter-spacing:-.035em; }
-.colab h2 { font:800 28px/1.15 var(--display); margin:0 0 14px; }
-.colab p { margin:0 0 16px; font-size:20px; line-height:1.45; }
-.cc-home { display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:40px; padding:20px 0 32px; }
-.cc-home .cc-primary { min-width:245px; font-size:24px; margin:14px 0; }
-.cc-age { font-weight:800; color:var(--cc-purple); margin-bottom:12px; }
-.cc-intro-art { min-height:340px; background:#E9E1F2; border-radius:28px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-.cc-intro-art svg { width:90%; max-height:350px; }
-.cc-lesson { font-weight:700; }
-.cc-older, .cc-guide { border-top:2px solid #DFD1C4; padding:22px 0; }
-.colab summary { font:800 24px var(--display); cursor:pointer; padding:6px 0; }
-.cc-older-inner { display:flex; gap:16px; flex-wrap:wrap; padding-top:20px; }
-.cc-older-inner button { text-align:left; flex:1; min-width:230px; }
-.cc-older-inner small { display:block; font-size:16px; font-weight:500; margin-top:8px; }
-.cc-stage { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:30px; align-items:start; }
-.cc-board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; padding:16px; background:#E8DBCE; border-radius:25px; }
-.cc-cell { aspect-ratio:1; border-radius:18px; border:3px solid #FEFAEE; background:#E9E8D2; position:relative; display:flex; align-items:center; justify-content:center; }
-.cc-cell.start { background:#DAD1F2; }
-.cc-cell.goal { background:var(--cc-green); }
-.cc-cell.puddle { background:var(--cc-blue); }
-.cc-cell .cc-tile-label { position:absolute; bottom:3px; left:0; right:0; text-align:center; font-weight:800; font-size:12px; letter-spacing:.03em; }
-.cc-cell svg { width:88%; height:88%; overflow:visible; }
-.cc-cell .cc-robot { position:absolute; inset:1%; width:98%; height:98%; z-index:2; }
-.cc-cell .cc-target { opacity:1; }
-.cc-cell .cc-robot + .cc-target { opacity:.15; }
-.cc-cell.pip-here { outline:4px solid var(--cc-purple); outline-offset:-4px; }
-.cc-coins { display:flex; align-items:center; flex-wrap:wrap; gap:5px; margin:16px 0; min-height:40px; }
-.cc-coins .ico { width:34px; height:34px; }
-.cc-coins .spent { opacity:.18; }
-.cc-program { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:7px; margin:18px 0; min-height:72px; }
-.colab .cc-slot { min-width:0; padding:4px; border-style:dashed; background:#F6EEDC; min-height:72px; font-size:34px; position:relative; }
-.colab .cc-slot.filled { background:#E6DDF8; border:2px solid #AC97D4; touch-action:none; }
-.colab .cc-slot.current { background:#F6D06A; border:3px solid #725011; }
-.colab .cc-slot.drop-target { outline:4px solid #5638A4; }
-.cc-directions { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
-.colab .cc-arrow { min-width:0; min-height:84px; font-size:44px; padding:6px; border-color:#5638A4; background:#FFFDF8; touch-action:none; box-shadow:0 4px 0 #C1AFDA; }
-.cc-arrow small { display:block; font:700 13px var(--body); }
-.cc-run-controls { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
-.cc-run-controls .cc-primary { flex:1; }
-.cc-message { font-weight:700; min-height:65px; padding:16px 0; }
-.cc-success { padding:18px; background:#DFEECF; border-radius:20px; margin-top:16px; }
-.cc-success p:last-child { margin-bottom:0; }
-.cc-success .cc-run-controls { margin-top:12px; }
-.cc-bridge { margin-top:16px; width:100%; display:flex; align-items:center; justify-content:center; gap:12px; }
-.cc-bridge svg { height:45px; width:70px; }
-.cc-bridge[aria-pressed=true] { background:#F6E3AF; border-color:#8A6628; }
-.cc-drag-ghost { position:fixed; z-index:9999; pointer-events:none; transform:translate(-50%,-60%); background:#E7DDF9; border:3px solid #5638A4; border-radius:16px; width:72px; height:72px; display:grid; place-items:center; font:800 48px var(--body); box-shadow:0 8px 22px #291F3833; }
-.cc-help-copy { font-size:16px!important; color:#60556A; margin-top:14px!important; }
-.cc-guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; margin-top:22px; }
-.cc-guide-grid h3 { font-size:21px; margin-bottom:8px; }
-.cc-guide-grid p, .cc-guide-grid li { font-size:18px; }
-.cc-guide-grid ul { padding-left:23px; }
-.cc-guide-controls { display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; }
-.cc-qr { width:160px; height:160px; }
-.cc-takehome { display:flex; align-items:center; gap:24px; padding-top:24px; border-top:2px solid #DFD1C4; margin-top:28px; }
-.cc-kiosk-home { margin:10px; }
-#cc-print { display:none; }
-@media(max-width:760px) {
- .colab { padding:14px 16px 28px; }
- .cc-home { gap:20px; grid-template-columns:1fr; padding-top:8px; }
- .cc-intro-art { min-height:180px; order:-1; }
- .cc-intro-art svg { height:190px; }
- .cc-home h1 { font-size:40px; }
- .cc-stage { grid-template-columns:1fr; gap:22px; }
- .cc-board { max-width:480px; margin:auto; width:100%; padding:12px; gap:8px; }
- .cc-guide-grid { grid-template-columns:1fr; }
- .cc-nav { margin-bottom:20px; }
- .cc-nav button { font-size:16px; padding:8px 12px; }
- .cc-takehome { align-items:start; }
- .cc-takehome img { width:105px; height:105px; }
-}
-@media print {
- body { background:white!important; }
- #app, #colab, #live { display:none!important; }
- #cc-print { display:block!important; color:#22192E; font-family:Arial,sans-serif; }
- #cc-print .cc-print-page { page-break-after:always; padding:8mm; }
- #cc-print .cc-print-page:last-child { page-break-after:auto; }
- #cc-print h1 { font-size:27pt; }
- #cc-print p { font-size:16pt; }
- #cc-print .cc-board { width:165mm; gap:3mm; padding:4mm; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
- #cc-print .cc-cell { height:47mm; border:1mm solid #fff; aspect-ratio:auto; }
- #cc-print .cc-cut-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6mm; }
- #cc-print .cc-cut { border:1px dashed #555; text-align:center; font-size:56pt; padding:3mm; }
- #cc-print .cc-cut svg { width:25mm; height:25mm; }
- #cc-print .cc-qr { width:36mm; height:36mm; }
- @page { size:A4; margin:8mm; }
-}
-
-
 :root { color-scheme:light; }
 body.dive-page { margin:0; background:#F7F0E3; color:#251A34; }
 .dive { max-width:1200px; margin:auto; padding:22px 26px 54px; }
@@ -781,13 +681,96 @@ body.dive-page { margin:0; background:#F7F0E3; color:#251A34; }
  .dive-guest strong { font-size:14px; }
 }
 @media(prefers-reduced-motion:reduce){ .dive-hero-art svg { animation:none; } }
-</style></head>
-<body class="dive-page"><main class="dive">
-<nav class="dive-nav" aria-label="Page navigation"><span class="dive-brand">Robot Restaurant</span><a href="https://mohanprabha9174-collab.github.io/robot-restaurant-demo/robot-delivery-colab.html">Back to Robot Delivery</a></nav>
-<header class="dive-hero"><div><p class="dive-label">DEEP DIVE</p><h1>Learn with Pip</h1><p>Try Python code and see what happens when you run your own restaurant.</p></div><div class="dive-hero-art" id="dive-hero-pip"></div></header>
-<div class="dive-grid"><nav class="dive-chooser" aria-label="Deep Dive activities"><h2>Activities</h2><div class="dive-progress"><span id="dive-count" aria-live="polite"></span><progress id="dive-progress" aria-label="Activities explored" max="4" value="0"></progress></div><div class="dive-nav-buttons" id="dive-picker"></div></nav>
-<section class="dive-panel" id="dive-lesson" aria-labelledby="dive-title"></section></div>
-<noscript><p>Enable JavaScript to run the interactive examples.</p></noscript>
+.dive-reading { min-width:0; }
+.dive-grid { grid-template-columns:200px minmax(0,1fr); gap:36px; }
+.dive-chooser { position:sticky; top:20px; }
+.dive-chooser h2 { font-size:19px; }
+.dive-chapter { padding:0 0 38px; margin:0 0 34px; border-bottom:2px solid #E0D2C3; scroll-margin-top:18px; }
+.dive-chapter:last-child { margin-bottom:0; }
+.dive-chapter .dive-topic { font-size:15px; color:#5C3EA8; font-weight:800; margin:0 0 6px; }
+.dive-chapter h2 { font:800 clamp(30px,4vw,42px)/1.08 var(--display); margin:0 0 14px; }
+.dive-copy { max-width:70ch; }
+.dive-copy p { margin:0 0 15px; font-size:19px; line-height:1.65; }
+.dive-copy code { font-size:.92em; color:#473169; background:#EDE4F4; padding:1px 4px; border-radius:4px; }
+.dive-worked { background:#302040; color:#FFF8E9; border-radius:13px; padding:15px 18px; margin:16px 0 22px; overflow:auto; font:16px/1.55 ui-monospace,Consolas,monospace; }
+.dive-worked code { background:none; color:inherit; padding:0; font-size:inherit; }
+.dive-copy .dive-formula { font-weight:800; color:#453172; padding:10px 15px; border-left:4px solid #7456BB; background:#EEE6F5; }
+.dive-practice { padding:22px; border:2px solid #E3D6CA; border-radius:18px; background:#FFFCF5; }
+.dive-practice h3 { font:800 24px/1.2 var(--display); margin:0 0 10px; }
+.dive-practice p { margin:0 0 14px; }
+.dive-practice .dive-response { margin:14px 0 0; }
+.dive-checks { margin-top:24px; border-top:2px solid #E8DCCF; padding-top:20px; }
+.dive-check + .dive-check { border-top:1px solid #E8DCCF; margin-top:18px; padding-top:18px; }
+.dive-check fieldset { border:0; padding:0; margin:0 0 8px; min-width:0; }
+.dive-check legend { font-weight:800; margin-bottom:8px; }
+.dive-check label { display:flex; align-items:center; gap:8px; min-height:44px; }
+.dive-response.retry { background:#F8ECD0; color:#634613; }
+.dive-contents { display:grid; gap:5px; }
+.dive-contents a { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px; color:#4C328B; background:#F2E9F5; border-radius:9px; min-height:44px; font-weight:750; text-decoration:none; }
+.dive-contents a:hover { background:#E7D9F3; text-decoration:underline; }
+.dive-contents .done { color:#205D3F; }
+@media(max-width:790px){
+ .dive-grid { grid-template-columns:1fr; gap:20px; }
+ .dive-chooser { position:static; }
+ .dive-contents { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .dive-practice { padding:16px; }
+}
+.dive-check input[type=number] { width:88px; min-height:44px; padding:6px 10px; border:2px solid #CCBFD1; border-radius:10px; color:#302040; background:#fff; }
+</style></head><body class="dive-page"><main class="dive">
+<nav class="dive-nav" aria-label="Page navigation"><span class="dive-brand">Robot Restaurant</span><a href="https://mohanprabha9174-collab.github.io/robot-restaurant-demo/">Back to Robot Restaurant</a></nav>
+<header class="dive-hero"><div><p class="dive-label">DEEP DIVE</p><h1>Learn with Pip</h1><p>Read how Pip follows Python instructions and makes restaurant choices. Then try each idea yourself.</p></div><div class="dive-hero-art" id="dive-hero-pip"></div></header>
+<div class="dive-grid"><nav class="dive-chooser" aria-label="On this page"><h2>On this page</h2><div class="dive-progress"><span id="dive-count" aria-live="polite"></span><progress id="dive-progress" aria-label="Activities complete" max="12" value="0"></progress></div><div class="dive-contents" id="dive-picker"><a href="#variables">Variables<span class="done" data-progress-for="variables" aria-hidden="true"></span></a><a href="#loops">Loops<span class="done" data-progress-for="loops" aria-hidden="true"></span></a><a href="#budget">Budgets<span class="done" data-progress-for="budget" aria-hidden="true"></span></a><a href="#price">Prices and profit<span class="done" data-progress-for="price" aria-hidden="true"></span></a></div></nav>
+<article class="dive-reading" aria-label="Python and economics lessons">
+  <section id="variables" class="dive-chapter">
+    <p class="dive-topic">Python</p>
+    <h2>Variables and print</h2>
+    <div class="dive-copy">
+      <p>When Pip takes an order, it needs to remember what the guest asked for. In Python, a <strong>variable</strong> is a name that refers to a value. In <code>snack = "pizza"</code>, <code>snack</code> is the name and <code>"pizza"</code> is the value. The equals sign assigns that value to the name.</p>
+      <p>Python runs these lines in order. If you assign a new value to <code>snack</code>, the next line uses that new value. The command <code>print(snack)</code> displays the current value. Put a word in quotes inside <code>print()</code>, and Python displays the word itself.</p>
+      <pre class="dive-worked"><code>snack = "pizza"
+snack = "soup"
+print(snack)    # Shows soup</code></pre>
+    </div>
+    <div class="dive-practice" data-practice="variables"></div>
+  </section>
+
+  <section id="loops" class="dive-chapter">
+    <p class="dive-topic">Python</p>
+    <h2>Loops</h2>
+    <div class="dive-copy">
+      <p>Imagine three guests arrive and Pip needs to greet each one. You could write <code>print("Hello!")</code> three times. A <strong>loop</strong> lets you write the instruction once and say how many times to repeat it.</p>
+      <p>In <code>for step in range(3)</code>, <code>range(3)</code> supplies the numbers 0, 1, and 2. That gives the loop three turns. The colon starts the loop body, and the spaces at the start of the next line tell Python that the line belongs inside the loop. A line back at the left edge runs after the loop finishes.</p>
+      <pre class="dive-worked"><code>for step in range(3):
+    print("Hello!")
+print("All guests greeted!")</code></pre>
+    </div>
+    <div class="dive-practice" data-practice="loops"></div>
+  </section>
+
+  <section id="budget" class="dive-chapter">
+    <p class="dive-topic">Economics</p>
+    <h2>Budgets and trade-offs</h2>
+    <div class="dive-copy">
+      <p>A <strong>budget</strong> tells you how much you can spend. Pip starts with six coins. Buying a three-coin drink stand leaves three coins in the register. It also gives Pip a way to earn more when guests buy drinks. In this example, the only cost for serving the three drinks is buying the stand.</p>
+      <p>Decorations cost two more coins and give Pip extra popularity when it serves guests. Spending those coins means giving up the option to save them. Economists call the next best option you give up the <strong>opportunity cost</strong>. Compare the same three guests with different purchases to see what each choice gives Pip.</p>
+      <p class="dive-formula">Starting coins − spending + earnings = final coins</p>
+    </div>
+    <div class="dive-practice" data-practice="budget"></div>
+  </section>
+
+  <section id="price" class="dive-chapter">
+    <p class="dive-topic">Economics</p>
+    <h2>Prices, sales, and profit</h2>
+    <div class="dive-copy">
+      <p>When Pip raises the price of a drink, each sale brings in more coins. At the same time, some guests may have too few coins to buy one. In this activity, every guest wants one drink and buys it if they can afford it. Try changing the price while keeping the guests and their budgets the same.</p>
+      <p><strong>Sales revenue</strong> is all the money customers pay. <strong>Profit</strong> is what remains after costs. Suppose a drink sells for two coins and costs one coin to make. Each sale adds two coins in revenue and one coin in profit. A price that sells the most drinks can give a different result from a price that earns the most profit.</p>
+      <p class="dive-formula">Sales revenue − cost of making the drinks = profit</p>
+    </div>
+    <div class="dive-practice" data-practice="price"></div>
+  </section>
+</article>
+</div>
+<noscript><p>Enable JavaScript to try the activities.</p></noscript>
 <p class="dive-footer">The restaurant activities use pretend coins. Progress is saved in this browser.</p>
 </main><script>
 /* Robot Restaurant art: original inline SVG. No external images. */
@@ -1003,26 +986,20 @@ body.dive-page { margin:0; background:#F7F0E3; color:#251A34; }
 })(typeof window !== 'undefined' ? window : this);
 </script><script>(function () {
   'use strict';
-  var lesson = document.getElementById('dive-lesson');
-  var picker = document.getElementById('dive-picker');
+  var contents = document.getElementById('dive-picker');
   var progress = document.getElementById('dive-progress');
   var progressCount = document.getElementById('dive-count');
   var heroPip = document.getElementById('dive-hero-pip');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var STORAGE = 'robot-restaurant-deep-dive-progress-v1';
-  var lessons = [
-    { key:'variables', topic:'Python', label:'Variables and print', show: variables },
-    { key:'loops', topic:'Python', label:'Loops', show: loops },
-    { key:'budget', topic:'Economics', label:'Spend or save', show: budget },
-    { key:'price', topic:'Economics', label:'Price and profit', show: price }
-  ];
+
+  var lessonKeys=['variables','loops','budget','price'];
+  var validKeys = new Set(lessonKeys.flatMap(function (key) { return [key,key+'-check-0',key+'-check-1']; }));
   var completed = new Set();
-  var active = lessons[0];
-  var timer = null;
   try {
     var saved = JSON.parse(localStorage.getItem(STORAGE) || '[]');
-    if (Array.isArray(saved)) lessons.forEach(function (item) { if(saved.indexOf(item.key)!==-1)completed.add(item.key); });
-  } catch (error) { /* The activities also work without storage. */ }
+    if (Array.isArray(saved)) saved.forEach(function (key) { if(validKeys.has(key))completed.add(key); });
+  } catch (error) { /* Activities remain available without storage. */ }
   function robot(wave) {
     return '<svg class="scene" viewBox="-100 -115 210 285" role="img" aria-label="Pip the robot">' + ART.robot({mood:'happy',wave:wave}) + '</svg>';
   }
@@ -1032,59 +1009,52 @@ body.dive-page { margin:0; background:#F7F0E3; color:#251A34; }
   function celebrate() {
     if (!reduced.matches && heroPip.animate) heroPip.animate([{transform:'translateY(0)'},{transform:'translateY(-15px) rotate(-4deg)'},{transform:'translateY(0)'}],{duration:480,easing:'ease-out'});
   }
-  function refreshPicker() {
-    progress.value = completed.size;
-    progressCount.textContent = completed.size + ' of ' + lessons.length + ' activities explored';
-    Array.from(picker.querySelectorAll('button')).forEach(function (button) {
-      var key = button.dataset.lesson;
-      button.setAttribute('aria-current',String(key===active.key));
-      button.querySelector('.dive-done').textContent=completed.has(key)?'✓':'';
+
+  function updateProgress() {
+    progress.value=completed.size;
+    progressCount.textContent=completed.size+' of '+validKeys.size+' activities complete';
+    contents.querySelectorAll('[data-progress-for]').forEach(function (mark) {
+      var key=mark.dataset.progressFor;
+      mark.textContent=[key,key+'-check-0',key+'-check-1'].every(function (id) { return completed.has(id); })?'✓':'';
     });
   }
-  function complete() {
-    completed.add(active.key);
+  function complete(key) {
+    completed.add(key);
     try { localStorage.setItem(STORAGE,JSON.stringify(Array.from(completed))); } catch (error) { /* Progress stays in this tab. */ }
-    refreshPicker();
+    updateProgress();
     celebrate();
   }
-  function response(message) { lesson.querySelector('.dive-response').textContent=message; }
-  function show(item,focus) {
-    clearTimeout(timer);
-    active=item;
-    lesson.innerHTML='<p class="dive-topic">'+item.topic+'</p><h2 tabindex="-1" id="dive-title">'+item.label+'</h2>';
-    item.show();
-    refreshPicker();
-    if(focus) lesson.querySelector('h2').focus({preventScroll:true});
-  }
-  function variables() {
-    lesson.insertAdjacentHTML('beforeend', '<p>A variable is a name for a value. Here, <code>snack</code> stores the name of a food. <code>print()</code> shows its value.</p>'+
-      '<div class="dive-row"><label for="dive-snack"><b>Choose a snack</b></label><select id="dive-snack"><option value="pizza">Pizza</option><option value="apple">Apple</option><option value="soup">Soup</option></select></div>'+
-      '<div class="dive-pair"><div><span class="dive-console-label">Python</span><pre class="dive-console" id="dive-code"></pre></div><div><span class="dive-console-label">Output</span><pre class="dive-console output" id="dive-output" aria-live="polite">Run the example to see the output.</pre></div></div>'+
-      '<fieldset class="dive-predict"><legend>What will print(snack) show?</legend><label><input type="radio" name="dive-prediction" value="food"><span id="dive-guess-food"></span></label><label><input type="radio" name="dive-prediction" value="name">snack</label></fieldset>'+
-      '<div class="dive-row"><button class="dive-primary" id="dive-run">Run example</button></div><p class="dive-response" role="status"></p>');
-    var select=lesson.querySelector('select'), code=lesson.querySelector('#dive-code'), output=lesson.querySelector('#dive-output');
+  function response(lesson,message) { lesson.querySelector('.dive-response').textContent=message; }
+  function variables(lesson) {
+    lesson.insertAdjacentHTML('beforeend','<h3>Change a snack name</h3>'+ '<p>A variable is a name for a value. Here, <code>snack</code> stores the name of a food. <code>print()</code> shows its value.</p>'+
+      '<div class="dive-row"><label for="variables-snack"><b>Choose a snack</b></label><select id="variables-snack"><option value="pizza">Pizza</option><option value="apple">Apple</option><option value="soup">Soup</option></select></div>'+
+      '<div class="dive-pair"><div><span class="dive-console-label">Python</span><pre class="dive-console" id="variables-code"></pre></div><div><span class="dive-console-label">Output</span><pre class="dive-console output" id="variables-output" aria-live="polite">Run the example to see the output.</pre></div></div>'+
+      '<fieldset class="dive-predict"><legend>What will print(snack) show?</legend><label><input type="radio" name="variables-prediction" value="food"><span id="variables-guess-food"></span></label><label><input type="radio" name="variables-prediction" value="name">snack</label></fieldset>'+
+      '<div class="dive-row"><button class="dive-primary" id="variables-run">Run example</button></div><p class="dive-response" role="status"></p>');
+    var select=lesson.querySelector('select'), code=lesson.querySelector('#variables-code'), output=lesson.querySelector('#variables-output');
     function update() {
       code.textContent='snack = "'+select.value+'"\nprint(snack)';
-      lesson.querySelector('#dive-guess-food').textContent=select.value;
+      lesson.querySelector('#variables-guess-food').textContent=select.value;
       lesson.querySelectorAll('input[type=radio]').forEach(function (input) { input.checked=false; });
       output.textContent='Run the example to see the output.';
-      response('');
+      response(lesson, '');
     }
     select.addEventListener('change',update);
-    lesson.querySelector('#dive-run').addEventListener('click',function () {
-      var guess=lesson.querySelector('input[name=dive-prediction]:checked');
+    lesson.querySelector('#variables-run').addEventListener('click',function () {
+      var guess=lesson.querySelector('input[name=variables-prediction]:checked');
       output.textContent=select.value;
-      response((guess && guess.value==='food'?'You predicted it. ':'')+'Python reads the value stored in snack, so it prints '+select.value+'. Try choosing a different food.');
-      complete();
+      response(lesson, (guess && guess.value==='food'?'You predicted it. ':'')+'Python reads the value stored in snack, so it prints '+select.value+'. Try choosing a different food.');
+      complete('variables');
     });
     update();
   }
-  function loops() {
-    lesson.insertAdjacentHTML('beforeend','<p>A <code>for</code> loop repeats the indented line. Choose how many times Pip should say hello.</p>'+
-      '<div class="dive-range"><label for="dive-repeat"><b>Repeat count</b></label><input id="dive-repeat" type="range" min="1" max="5" value="3"><output id="dive-repeat-value" for="dive-repeat"></output></div>'+
-      '<div class="dive-pair"><div><span class="dive-console-label">Python</span><pre class="dive-console" id="dive-code"></pre></div><div><span class="dive-console-label">Output</span><pre class="dive-console output" id="dive-output" aria-live="polite">Run the loop to see each line.</pre></div></div>'+
-      '<div class="dive-loop-track" id="dive-track" aria-label="Loop steps"></div><button class="dive-primary" id="dive-run">Run loop</button><p class="dive-response" role="status"></p>');
-    var count=lesson.querySelector('#dive-repeat'), code=lesson.querySelector('#dive-code'), output=lesson.querySelector('#dive-output'), run=lesson.querySelector('#dive-run'), track=lesson.querySelector('#dive-track');
+
+  function loops(lesson) {
+    lesson.insertAdjacentHTML('beforeend','<h3>Run a loop with Pip</h3>'+'<p>A <code>for</code> loop repeats the indented line. Choose how many times Pip should say hello.</p>'+
+      '<div class="dive-range"><label for="loops-repeat"><b>Repeat count</b></label><input id="loops-repeat" type="range" min="1" max="5" value="3"><output id="loops-repeat-value" for="loops-repeat"></output></div>'+
+      '<div class="dive-pair"><div><span class="dive-console-label">Python</span><pre class="dive-console" id="loops-code"></pre></div><div><span class="dive-console-label">Output</span><pre class="dive-console output" id="loops-output" aria-live="polite">Run the loop to see each line.</pre></div></div>'+
+      '<div class="dive-loop-track" id="loops-track" aria-label="Loop steps"></div><button class="dive-primary" id="loops-run">Run loop</button><p class="dive-response" role="status"></p>');
+    var count=lesson.querySelector('#loops-repeat'), code=lesson.querySelector('#loops-code'), output=lesson.querySelector('#loops-output'), run=lesson.querySelector('#loops-run'), track=lesson.querySelector('#loops-track');
     function draw(step) {
       track.innerHTML=Array.from({length:Number(count.value)},function (_,i) {
         return '<div class="dive-loop-cell'+(i===step?' active':'')+'"><span>'+i+'</span>'+(i===step?'<span class="dive-tiny">'+robot(false)+'</span>':'')+'</div>';
@@ -1092,9 +1062,9 @@ body.dive-page { margin:0; background:#F7F0E3; color:#251A34; }
     }
     function update() {
       code.textContent='for step in range('+count.value+'):\n    print("Hello!")';
-      lesson.querySelector('#dive-repeat-value').textContent=count.value+' times';
+      lesson.querySelector('#loops-repeat-value').textContent=count.value+' times';
       output.textContent='Run the loop to see each line.';
-      response('');
+      response(lesson, '');
       draw(-1);
     }
     count.addEventListener('input',update);
@@ -1102,30 +1072,31 @@ body.dive-page { margin:0; background:#F7F0E3; color:#251A34; }
       var total=Number(count.value), current=0, lines=[];
       count.disabled=run.disabled=true;
       output.textContent='';
-      response('');
+      response(lesson, '');
       function step() {
         if (current===total) {
           count.disabled=run.disabled=false;
-          response('range('+total+') starts at 0 and stops before '+total+'. Pip printed Hello! '+total+(total===1?' time.':' times.'));
-          complete();
+          response(lesson, 'range('+total+') starts at 0 and stops before '+total+'. Pip printed Hello! '+total+(total===1?' time.':' times.'));
+          complete('loops');
           return;
         }
         draw(current++);
         lines.push('Hello!');
         output.textContent=lines.join('\n');
-        timer=setTimeout(step,reduced.matches?0:430);
+        setTimeout(step,reduced.matches?0:430);
       }
       step();
     });
     update();
   }
-  function budget() {
-    lesson.insertAdjacentHTML('beforeend','<p>Pip has <b>6 coins</b>. Choose what to buy before three guests arrive.</p>'+
-      '<div class="dive-shop"><label><input type="checkbox" id="dive-stand"><span><strong>Drink stand · 3 coins</strong><small>Serve three drinks for 2 coins each.</small></span></label><label><input type="checkbox" id="dive-decor"><span><strong>Decorations · 2 coins</strong><small>Gain 1 popularity per guest served.</small></span></label></div>'+
-      '<div class="dive-totals" id="dive-budget-totals" aria-live="polite"></div><div class="dive-people" id="dive-budget-guests" aria-label="Three guests"></div>'+
-      '<button class="dive-primary" id="dive-run">Open the restaurant</button><p class="dive-response" role="status"></p>');
-    var stand=lesson.querySelector('#dive-stand'), decor=lesson.querySelector('#dive-decor'), run=lesson.querySelector('#dive-run');
-    var totals=lesson.querySelector('#dive-budget-totals'), people=lesson.querySelector('#dive-budget-guests');
+
+  function budget(lesson) {
+    lesson.insertAdjacentHTML('beforeend','<h3>Choose what Pip buys</h3>'+'<p>Pip has <b>6 coins</b>. Choose what to buy before three guests arrive.</p>'+
+      '<div class="dive-shop"><label><input type="checkbox" id="budget-stand"><span><strong>Drink stand · 3 coins</strong><small>Serve three drinks for 2 coins each.</small></span></label><label><input type="checkbox" id="budget-decor"><span><strong>Decorations · 2 coins</strong><small>Gain 1 popularity per guest served.</small></span></label></div>'+
+      '<div class="dive-totals" id="budget-budget-totals" aria-live="polite"></div><div class="dive-people" id="budget-budget-guests" aria-label="Three guests"></div>'+
+      '<button class="dive-primary" id="budget-run">Open the restaurant</button><p class="dive-response" role="status"></p>');
+    var stand=lesson.querySelector('#budget-stand'), decor=lesson.querySelector('#budget-decor'), run=lesson.querySelector('#budget-run');
+    var totals=lesson.querySelector('#budget-budget-totals'), people=lesson.querySelector('#budget-budget-guests');
     function spent() { return (stand.checked?3:0)+(decor.checked?2:0); }
     function draw(processed) {
       var served=stand.checked?processed:0, earned=served*2, popularity=5+(decor.checked?served:0);
@@ -1135,33 +1106,34 @@ body.dive-page { margin:0; background:#F7F0E3; color:#251A34; }
         return '<div class="dive-guest '+(servedGuest?'bought':i<processed?'passed':'')+'">'+guest(i,servedGuest?'happy':'asking')+'<strong>Guest '+(i+1)+'</strong>'+(servedGuest?'Served':i<processed?'No drink stand':'Wants a drink')+'</div>';
       }).join('');
     }
-    function update() { draw(0); response(''); }
+    function update() { draw(0); response(lesson, ''); }
     stand.addEventListener('change',update);decor.addEventListener('change',update);
     run.addEventListener('click',function () {
       var processed=0;
       stand.disabled=decor.disabled=run.disabled=true;
-      draw(0);response('');
+      draw(0);response(lesson, '');
       function serve() {
         draw(++processed);
-        if(processed<3) { timer=setTimeout(serve,reduced.matches?0:480);return; }
+        if(processed<3) { setTimeout(serve,reduced.matches?0:480);return; }
         stand.disabled=decor.disabled=run.disabled=false;
-        if (stand.checked && decor.checked) response('The stand earned 6 coins. Decorations added 3 popularity. Try just the stand to compare your final coins.');
-        else if (stand.checked) response('The stand cost 3 coins and earned 6. Buying it left Pip with 9 coins. What happens if you add decorations?');
-        else if (decor.checked) response('Decorations cost 2 coins. Their bonus applies to guests you serve. What would help Pip serve drinks?');
-        else response('Pip kept all 6 coins. The drink stand would cost some of those coins now and let Pip make sales. Try buying it.');
-        complete();
+        if (stand.checked && decor.checked) response(lesson, 'The stand earned 6 coins. Decorations added 3 popularity. Try just the stand to compare your final coins.');
+        else if (stand.checked) response(lesson, 'The stand cost 3 coins and earned 6. Buying it left Pip with 9 coins. What happens if you add decorations?');
+        else if (decor.checked) response(lesson, 'Decorations cost 2 coins. Their bonus applies to guests you serve. What would help Pip serve drinks?');
+        else response(lesson, 'Pip kept all 6 coins. The drink stand would cost some of those coins now and let Pip make sales. Try buying it.');
+        complete('budget');
       }
-      timer=setTimeout(serve,reduced.matches?0:350);
+      setTimeout(serve,reduced.matches?0:350);
     });
     draw(0);
   }
-  function price() {
+
+  function price(lesson) {
     var budgets=[1,2,2,3,4];
-    lesson.insertAdjacentHTML('beforeend','<p>Each guest buys one drink if they can afford it. A drink costs Pip <b>1 coin</b> to make.</p>'+
-      '<div class="dive-range"><label for="dive-price"><b>Drink price</b></label><input id="dive-price" type="range" min="1" max="4" value="2"><output id="dive-price-value" for="dive-price"></output></div>'+
-      '<div class="dive-people" id="dive-price-guests" aria-label="Guest budgets"></div><button class="dive-primary" id="dive-run">Try this price</button>'+
-      '<div class="dive-totals" id="dive-price-totals" aria-live="polite"></div><p class="dive-response" role="status"></p>');
-    var control=lesson.querySelector('#dive-price'), run=lesson.querySelector('#dive-run'), totals=lesson.querySelector('#dive-price-totals'), people=lesson.querySelector('#dive-price-guests');
+    lesson.insertAdjacentHTML('beforeend','<h3>Set the price of a drink</h3>'+'<p>Each guest buys one drink if they can afford it. A drink costs Pip <b>1 coin</b> to make.</p>'+
+      '<div class="dive-range"><label for="price-price"><b>Drink price</b></label><input id="price-price" type="range" min="1" max="4" value="2"><output id="price-price-value" for="price-price"></output></div>'+
+      '<div class="dive-people" id="price-price-guests" aria-label="Guest budgets"></div><button class="dive-primary" id="price-run">Try this price</button>'+
+      '<div class="dive-totals" id="price-price-totals" aria-live="polite"></div><p class="dive-response" role="status"></p>');
+    var control=lesson.querySelector('#price-price'), run=lesson.querySelector('#price-run'), totals=lesson.querySelector('#price-price-totals'), people=lesson.querySelector('#price-price-guests');
     function draw(processed) {
       var amount=Number(control.value), buyers=0;
       people.innerHTML=budgets.map(function (coins,i) {
@@ -1172,34 +1144,96 @@ body.dive-page { margin:0; background:#F7F0E3; color:#251A34; }
       totals.innerHTML=processed?'<span>Sold '+buyers+'</span><span>Sales '+(amount*buyers)+'</span><span>Cost '+buyers+'</span><span>Profit '+((amount-1)*buyers)+'</span>':'';
     }
     function update() {
-      lesson.querySelector('#dive-price-value').textContent=control.value+' coin'+(control.value==='1'?'':'s');
-      draw(0);response('');
+      lesson.querySelector('#price-price-value').textContent=control.value+' coin'+(control.value==='1'?'':'s');
+      draw(0);response(lesson, '');
     }
     control.addEventListener('input',update);
     run.addEventListener('click',function () {
       var processed=0;
       control.disabled=run.disabled=true;
-      draw(0);response('');
+      draw(0);response(lesson, '');
       function serve() {
         draw(++processed);
-        if(processed<budgets.length) { timer=setTimeout(serve,reduced.matches?0:280);return; }
+        if(processed<budgets.length) { setTimeout(serve,reduced.matches?0:280);return; }
         control.disabled=run.disabled=false;
-        response('Profit is sales minus the cost of making the drinks. Compare prices of 2 and 3 coins. Which one serves more guests while making the same profit?');
-        complete();
+        response(lesson, 'Profit is sales minus the cost of making the drinks. Compare prices of 2 and 3 coins. Which one serves more guests while making the same profit?');
+        complete('price');
       }
-      timer=setTimeout(serve,reduced.matches?0:280);
+      setTimeout(serve,reduced.matches?0:280);
     });
     update();
   }
-  heroPip.innerHTML=robot(true);
-  picker.innerHTML=lessons.map(function (item) {
-    return '<button data-lesson="'+item.key+'"><small>'+item.topic+'</small>'+item.label+'<span class="dive-done" aria-hidden="true"></span></button>';
-  }).join('');
-  picker.addEventListener('click',function (event) {
-    var button=event.target.closest('button[data-lesson]');
-    if (!button) return;
-    show(lessons.find(function (item) { return item.key===button.dataset.lesson; }),true);
+  var checks = {
+    variables: [
+      { question:'In snack = "pizza", which part is the variable’s name?',
+        choices:['snack','pizza','The equals sign'], answer:0,
+        explanation:'The name is on the left. The text value goes in quotes on the right.' },
+      { question:'What would print("snack") show?',
+        choices:['The selected food','The word snack','An empty line'], answer:1,
+        explanation:'Quotes tell Python to use the text inside them. Try comparing that with print(snack).' }
+    ],
+    loops: [
+      { question:'How many turns does range(4) give the loop?',
+        choices:['Three','Four','Five'], answer:1,
+        explanation:'The numbers are 0, 1, 2, and 3. Count those four turns.' },
+      { question:'In the example above, how many times does Python print “All guests greeted!”?',
+        choices:['Once','Three times','Four times'], answer:0,
+        explanation:'That line starts at the left edge, so Python runs it once after the loop.' }
+    ],
+    budget: [
+      { question:'Buy only the stand, then serve all three guests. How many coins does Pip finish with?',
+        amount:9, hint:'Subtract the stand price from the starting coins, then add what the three drinks earn.',
+        explanation:'Start with 6, spend 3, and earn 6. That leaves 9 coins.' },
+      { question:'With the stand already bought, what does Pip give up by buying decorations?',
+        choices:['Two coins it could have saved','The ability to sell drinks','All three guests'], answer:0,
+        explanation:'Decorations improve popularity for served guests. Pip gives up the chance to keep those two coins.' }
+    ],
+    price: [
+      { question:'Four drinks sell for two coins each. Each costs one coin to make. What is the profit?',
+        amount:4, hint:'Calculate what the guests pay and what the four drinks cost to make. Subtract those costs from the sales revenue.',
+        explanation:'Guests pay 8 coins in total. Making the four drinks costs 4, so profit is 4 coins.' },
+      { question:'Try prices of 2 and 3 coins. Which serves more guests while earning the same profit?',
+        choices:['2 coins','3 coins','They serve the same number'], answer:0,
+        explanation:'At 2 coins, four guests buy. At 3 coins, two guests buy. Both prices earn 4 coins in profit.' }
+    ]
+  };
+  function renderChecks(lesson,key) {
+    var block = document.createElement('div');
+    block.className = 'dive-checks';
+    block.innerHTML = '<h3>Check your understanding</h3>';
+    checks[key].forEach(function (item,index) {
+      var id=key+'-check-'+index;
+      var form=document.createElement('form');
+      form.className='dive-check';
+      var numeric = Number.isInteger(item.amount);
+      var inputs = numeric
+        ? '<label>Your answer in coins <input type="number" min="0" max="100" inputmode="numeric" required></label>'
+        : item.choices.map(function (choice,i) {
+          return '<label><input type="radio" name="'+id+'" value="'+i+'" required>'+choice+'</label>';
+        }).join('');
+      form.innerHTML='<fieldset><legend>'+item.question+'</legend>'+inputs+'</fieldset><button type="submit">Check answer</button><p class="dive-response" role="status"></p>';
+      form.addEventListener('submit',function (event) {
+        event.preventDefault();
+        var selected=form.querySelector(numeric?'input[type=number]':'input:checked');
+        if(!selected || selected.value==='')return;
+        var correct=Number(selected.value)===(numeric?item.amount:item.answer);
+        var feedback=form.querySelector('.dive-response');
+        feedback.classList.toggle('retry',!correct);
+        feedback.textContent=correct?'Correct. '+item.explanation:'Try again. '+(item.hint||item.explanation);
+        if(correct)complete(id);
+      });
+      block.appendChild(form);
+    });
+    lesson.appendChild(block);
+  }
+
+  var demos={variables:variables,loops:loops,budget:budget,price:price};
+  lessonKeys.forEach(function (key) {
+    var section=document.querySelector('[data-practice="'+key+'"]');
+    demos[key](section);
+    renderChecks(section,key);
   });
-  show(active,false);
+  heroPip.innerHTML=robot(true);
+  updateProgress();
 })();
 </script></body></html>
